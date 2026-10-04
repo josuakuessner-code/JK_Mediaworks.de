@@ -1,7 +1,8 @@
 {
-  "name": "jk-mediaworks",
+  "name": "jk-mediaworks-de",
   "main": "worker/index.ts",
   "compatibility_date": "2025-01-01",
+  "vars": { "MAIL_TO": "josua.kuessner@gmail.com" },
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
