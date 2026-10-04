@@ -9,17 +9,23 @@ import ProjectsSection from './sections/ProjectsSection'
 import ContactSection from './sections/ContactSection'
 import LegalPage from './sections/LegalPage'
 import ContactPage from './sections/ContactPage'
+import ProjectPage from './sections/ProjectPage'
+import { PROJECTS } from './data/content'
 
 const PAGES = ['kontakt', 'impressum', 'datenschutz'] as const
-type Page = 'home' | (typeof PAGES)[number]
+type Page = 'home' | 'projekt' | (typeof PAGES)[number]
 
+const segments = () => window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase().split('/')
 const route = (): Page => {
-  const seg = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase()
+  const [seg] = segments()
+  if (seg === 'projekt') return 'projekt'
   return (PAGES as readonly string[]).includes(seg) ? (seg as Page) : 'home'
 }
+const projectId = () => segments()[1] ?? ''
 
 const TITLES: Record<Page, string> = {
   home: 'JK-Mediaworks | Fotograf Wiesbaden: Sport, Konzerte, Hochzeiten',
+  projekt: 'Projekt | JK-Mediaworks',
   kontakt: 'Anfrage | JK-Mediaworks',
   impressum: 'Impressum | JK-Mediaworks',
   datenschutz: 'Datenschutz | JK-Mediaworks',
@@ -40,9 +46,11 @@ export default function App() {
     return () => window.removeEventListener('popstate', on)
   }, [])
 
+  const pid = page === 'projekt' ? projectId() : ''
   useEffect(() => {
-    document.title = TITLES[page]
-  }, [page])
+    const proj = PROJECTS.find((p) => p.id === pid)
+    document.title = proj ? `${proj.name} | JK-Mediaworks` : TITLES[page]
+  }, [page, pid])
 
   return (
     <MotionConfig reducedMotion="user">
@@ -57,6 +65,8 @@ export default function App() {
             <ProjectsSection />
             <ContactSection />
           </>
+        ) : page === 'projekt' ? (
+          <ProjectPage key={pid} id={pid} />
         ) : page === 'kontakt' ? (
           <ContactPage />
         ) : (

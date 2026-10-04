@@ -18,7 +18,8 @@ function Card({ p, index, total }: { p: Project; index: number; total: number })
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start start'] })
   const targetScale = 1 - (total - 1 - index) * 0.03
   const scale = useTransform(scrollYProgress, [0, 1], [1, targetScale])
-  const imgs = PROJECT_IMAGES[p.id] ?? []
+  const all = PROJECT_IMAGES[p.id] ?? []
+  const imgs = all.slice(0, 4)
   const [open, setOpen] = useState<number | null>(null)
   const items = imgs.map((src, i) => ({ src, alt: `${p.category}: ${p.name}, Aufnahme ${i + 1} von ${imgs.length}` }))
 
@@ -38,7 +39,7 @@ function Card({ p, index, total }: { p: Project; index: number; total: number })
               <h3 className="font-medium uppercase text-[#D7E2EA]" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>{p.name}</h3>
             </div>
           </div>
-          <LiveProjectButton />
+          <LiveProjectButton href={`/projekt/${p.id}`} label="Zum Projekt" />
         </div>
         <div className={`grid gap-3 sm:gap-4 ${gridCols(imgs.length)}`}>
           {imgs.map((src, i) => (

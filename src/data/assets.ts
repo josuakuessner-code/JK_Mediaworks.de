@@ -1,3 +1,4 @@
+import { mixed } from '../lib/mix'
 import portrait from '../assets/josua-portrait.webp'
 import mq01 from '../assets/mq01.webp'
 import mq02 from '../assets/mq02.webp'
@@ -44,11 +45,15 @@ export const HERO_PORTRAIT = portrait
 export const MARQUEE_IMAGES: string[] = [mq01, mq02, mq03, mq04, mq05, mq06, mq07, mq08, mq09, mq10, mq11]
 export const ABOUT_IMAGES = { moon: about1, object: about2, lego: about3, group: about4 }
 // Schlüssel = id des Projekts in content.ts (Ordnerstruktur: Kategorie > Job)
-export const PROJECT_IMAGES: Record<string, string[]> = {
+const RAW_PROJECT_IMAGES: Record<string, string[]> = {
   'barock-volleys': [p1a, p1b, p1c],
   'u18-4-nations-cup': [p2a, p2b, p2c],
   'dvv-pokalfinale': [p4a, p4b, p4c],
   'hochzeit-schweden': [wed1, wed2, wed3, wed4],
   'media-day-eintracht': [md1, md2, md3, md4, md5, md6],
 }
+// Gemischte Reihenfolge: die ersten 4 stehen auf der Startseite, die Galerie zeigt alle.
+export const PROJECT_IMAGES: Record<string, string[]> = Object.fromEntries(
+  Object.entries(RAW_PROJECT_IMAGES).map(([id, imgs]) => [id, mixed(id, imgs)]),
+)
 export const BTS_IMAGES: string[] = [bts1, bts2, bts3, bts4, bts5]

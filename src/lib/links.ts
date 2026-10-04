@@ -25,7 +25,10 @@ export function navigate(path: string) {
     return
   }
   window.dispatchEvent(new PopStateEvent('popstate'))
-  window.scrollTo(0, 0)
+  const hash = path.split('#')[1]
+  // Mit Anker (z. B. /#projects): nach dem Rendern dorthin springen, sonst nach oben.
+  if (hash) setTimeout(() => document.getElementById(hash)?.scrollIntoView(), 60)
+  else window.scrollTo(0, 0)
 }
 
 // mailto: im eingebetteten Frame in neuem Fenster öffnen, sonst bliebe die Seite weiß.
