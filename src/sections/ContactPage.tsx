@@ -21,20 +21,20 @@ const FORMATE = [
 ]
 
 const field =
-  'w-full rounded-2xl border border-[#D7E2EA]/20 bg-[#161616] px-5 py-3.5 text-base font-light text-[#D7E2EA] placeholder:text-[#D7E2EA]/35 transition-colors duration-200 focus:border-[#B600A8] focus:outline-none focus-visible:outline-none'
+  'block w-full min-w-0 max-w-full appearance-none rounded-2xl border border-[#D7E2EA]/20 bg-[#161616] px-5 py-3.5 text-base font-light text-[#D7E2EA] placeholder:text-[#D7E2EA]/35 transition-colors duration-200 focus:border-[#B600A8] focus:outline-none focus-visible:outline-none'
 const labelCls = 'mb-2 block text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/70'
 
 const Card = ({ title, children, delay = 0 }: { title: string; children: ReactNode; delay?: number }) => (
   <FadeIn y={40} delay={delay}>
     <fieldset className="rounded-[32px] border-2 border-[#D7E2EA]/25 bg-[#0C0C0C] p-5 sm:rounded-[40px] sm:p-8">
       <legend className="hero-heading px-2 text-2xl font-black uppercase sm:text-3xl">{title}</legend>
-      <div className="mt-2 grid gap-5 sm:grid-cols-2">{children}</div>
+      <div className="mt-2 grid grid-cols-[minmax(0,1fr)] gap-5 sm:grid-cols-[repeat(2,minmax(0,1fr))]">{children}</div>
     </fieldset>
   </FadeIn>
 )
 
 const Field = ({ label, full, children }: { label: string; full?: boolean; children: ReactNode }) => (
-  <label className={`block ${full ? 'sm:col-span-2' : ''}`}>
+  <label className={`block min-w-0 ${full ? 'sm:col-span-2' : ''}`}>
     <span className={labelCls}>{label}</span>
     {children}
   </label>
@@ -235,9 +235,9 @@ export default function ContactPage() {
               </FadeIn>
 
               <Card title="Termin & Ort">
-                <Field label={mehrtaegig ? 'Von' : 'Datum'}><input name="datum" type="date" value={datumVon} onChange={(e) => setDatumVon(e.target.value)} className={`${field} [color-scheme:dark]`} /></Field>
+                <Field label={mehrtaegig ? 'Von' : 'Datum'}><input name="datum" type="date" value={datumVon} onChange={(e) => setDatumVon(e.target.value)} className={`${field} [color-scheme:dark] min-h-[3.25rem] [&::-webkit-date-and-time-value]:text-left`} /></Field>
                 {mehrtaegig ? (
-                  <Field label="Bis"><input name="datumBis" type="date" min={datumVon || undefined} required className={`${field} [color-scheme:dark]`} /></Field>
+                  <Field label="Bis"><input name="datumBis" type="date" min={datumVon || undefined} required className={`${field} [color-scheme:dark] min-h-[3.25rem] [&::-webkit-date-and-time-value]:text-left`} /></Field>
                 ) : (
                   <Field label="Uhrzeit / Dauer"><input name="zeit" className={field} placeholder="z. B. 14 bis 20 Uhr" /></Field>
                 )}
