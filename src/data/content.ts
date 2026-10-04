@@ -11,7 +11,7 @@ export const SITE = {
 export const SERVICES = [
   { name: 'Sportfotografie', text: 'Spielfotos und Highlights, die Tempo und Emotion einfangen: schnell geliefert und passend für Verein, Social Media und Presse.' },
   { name: 'Konzerte & Events', text: 'Live-Fotografie, die die Energie im Raum einfängt: von der Bühne bis zum Publikum, auch bei schwierigem Licht.' },
-  { name: 'Hochzeiten', text: 'Natürliche, emotionale Hochzeit Judith & Robin, die deinen Tag so erzählen, wie er sich angefühlt hat, vom ersten Blick bis zum letzten Tanz.' },
+  { name: 'Hochzeiten', text: 'Natürliche, emotionale Hochzeitsreportagen, die deinen Tag so erzählen, wie er sich angefühlt hat, vom ersten Blick bis zum letzten Tanz.' },
   { name: 'Portraits', text: 'Porträts und Businessfotos mit natürlichem Licht und entspannter Atmosphäre, für Website, Bewerbung oder Social Media.' },
   { name: 'Bildbearbeitung', text: 'Sorgfältige Auswahl, Retusche und ein einheitlicher Look, geliefert in hoher Auflösung und in den Formaten, die du brauchst.' },
 ]

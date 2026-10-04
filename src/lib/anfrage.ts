@@ -5,12 +5,16 @@ export type Anfrage = {
   name: string
   email: string
   phone: string
+  firma: string
+  adresse: string
   anlass: string
   datum: string
   zeit: string
   ort: string
   personen: string
-  wuensche: string[]
+  express: boolean
+  formate: string[]
+  formatEigen: string
   budget: string
   nachricht: string
 }
@@ -71,6 +75,8 @@ export function buildAnfragePdf(a: Anfrage) {
   row('Name', a.name)
   row('E-Mail', a.email)
   row('Telefon', a.phone)
+  row('Firma', a.firma)
+  row('Adresse', a.adresse)
   y += 4
   section('Anlass')
   row('Art', a.anlass)
@@ -80,7 +86,8 @@ export function buildAnfragePdf(a: Anfrage) {
   row('Personen / Gäste', a.personen)
   y += 4
   section('Wünsche')
-  row('Leistungen', a.wuensche.join(', '))
+  row('Lieferung', a.express ? 'Schnelle Lieferung (Express) gewünscht' : '')
+  row('Bildformate', [...a.formate, a.formatEigen].filter((x) => x.trim()).join(', '))
   row('Budget', a.budget)
   row('Nachricht', a.nachricht)
 

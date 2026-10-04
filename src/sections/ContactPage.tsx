@@ -7,8 +7,17 @@ import type { Anfrage } from '../lib/anfrage'
 import { downloadBlob, goTo, openMail } from '../lib/links'
 
 const ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT || '/api/anfrage'
-const ANLAESSE = [...SERVICES.map((s) => s.name), 'Sonstiges']
-const WUENSCHE = ['Schnelle Lieferung (Express)', 'Social-Media-Formate', 'Bilder in Druckauflösung', 'Bildauswahl vor Ort ansehen', 'Rechteübertragung / Lizenz']
+const ANLAESSE = [...SERVICES.flatMap((s) => (s.name === 'Konzerte & Events' ? ['Konzerte', 'Events'] : [s.name])), 'Sonstiges']
+const FORMATE = [
+  '16:9 Querformat',
+  '3:2 Querformat (Original)',
+  '4:3 Querformat',
+  '1:1 Quadrat',
+  '4:5 Hochformat (Instagram)',
+  '2:3 Hochformat',
+  '9:16 Hochkant (Story / Reel)',
+  'Unbeschnitten (Original)',
+]
 
 const field =
   'w-full rounded-2xl border border-[#D7E2EA]/20 bg-[#161616] px-5 py-3.5 text-base font-light text-[#D7E2EA] placeholder:text-[#D7E2EA]/35 transition-colors duration-200 focus:border-[#B600A8] focus:outline-none focus-visible:outline-none'
@@ -49,7 +58,9 @@ type Status = 'idle' | 'sending' | 'sent' | 'error'
 
 export default function ContactPage() {
   const [anlass, setAnlass] = useState('')
-  const [wuensche, setWuensche] = useState<string[]>([])
+  const [formate, setFormate] = useState<string[]>([])
+  const [express, setExpress] = useState(false)
+  const [consent, setConsent] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
   const [pdf, setPdf] = useState<{ blob: Blob; fileName: string } | null>(null)
   const [anlassMissing, setAnlassMissing] = useState(false)
@@ -62,7 +73,7 @@ export default function ContactPage() {
     }
   }, [])
 
-  const toggle = (w: string) => setWuensche((l) => (l.includes(w) ? l.filter((x) => x !== w) : [...l, w]))
+  const toggle = (w: string) => setFormate((l) => (l.includes(w) ? l.filter((x) => x !== w) : [...l, w]))
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -71,12 +82,13 @@ export default function ContactPage() {
       document.getElementById('anlass-group')?.scrollIntoView({ block: 'center' })
       return
     }
+    if (!consent) return
     const f = new FormData(e.currentTarget)
     const v = (k: string) => String(f.get(k) ?? '').trim()
     const data: Anfrage = {
-      name: v('name'), email: v('email'), phone: v('phone'), anlass,
+      name: v('name'), email: v('email'), phone: v('phone'), firma: v('firma'), adresse: v('adresse'), anlass,
       datum: v('datum'), zeit: v('zeit'), ort: v('ort'), personen: v('personen'),
-      wuensche, budget: v('budget'), nachricht: v('nachricht'),
+      express, formate, formatEigen: v('formatEigen'), budget: v('budget'), nachricht: v('nachricht'),
     }
     setStatus('sending')
     const { buildAnfragePdf } = await import('../lib/anfrage') // PDF-Bibliothek erst beim Absenden laden
@@ -167,7 +179,9 @@ export default function ContactPage() {
               <Card title="Kontakt">
                 <Field label="Name *"><input name="name" required autoComplete="name" className={field} placeholder="Vor- und Nachname" /></Field>
                 <Field label="E-Mail *"><input name="email" type="email" required autoComplete="email" className={field} placeholder="du@beispiel.de" /></Field>
-                <Field label="Telefon (optional)" full><input name="phone" type="tel" autoComplete="tel" className={field} placeholder="Für Rückfragen" /></Field>
+                <Field label="Telefon (optional)"><input name="phone" type="tel" autoComplete="tel" className={field} placeholder="Für Rückfragen" /></Field>
+                <Field label="Firma (optional)"><input name="firma" autoComplete="organization" className={field} placeholder="Verein, Unternehmen …" /></Field>
+                <Field label="Adresse (optional)" full><input name="adresse" autoComplete="street-address" className={field} placeholder="Straße, PLZ, Ort (z. B. für das Angebot)" /></Field>
               </Card>
 
               <FadeIn y={40}>
@@ -192,12 +206,17 @@ export default function ContactPage() {
               <FadeIn y={40}>
                 <fieldset className="rounded-[32px] border-2 border-[#D7E2EA]/25 p-5 sm:rounded-[40px] sm:p-8">
                   <legend className="hero-heading px-2 text-2xl font-black uppercase sm:text-3xl">Wünsche</legend>
-                  <div role="group" aria-label="Wünsche" className="mt-3 flex flex-wrap gap-3">
-                    {WUENSCHE.map((w) => (
-                      <Chip key={w} type="checkbox" active={wuensche.includes(w)} onClick={() => toggle(w)}>{w}</Chip>
+                  <div className="mt-3">
+                    <Chip type="checkbox" active={express} onClick={() => setExpress((v) => !v)}>Schnelle Lieferung (Express)</Chip>
+                  </div>
+                  <p className={`${labelCls} mt-8`}>Gewünschtes Bildformat (Mehrfachauswahl)</p>
+                  <div role="group" aria-label="Bildformat" className="flex flex-wrap gap-3">
+                    {FORMATE.map((w) => (
+                      <Chip key={w} type="checkbox" active={formate.includes(w)} onClick={() => toggle(w)}>{w}</Chip>
                     ))}
                   </div>
                   <div className="mt-6 grid gap-5">
+                    <Field label="Anderes Format (optional)"><input name="formatEigen" className={field} placeholder="z. B. 5:7 oder 1080 × 1350 px" /></Field>
                     <Field label="Budgetvorstellung (optional)"><input name="budget" className={field} placeholder="z. B. Rahmen oder Festpreis" /></Field>
                     <Field label="Nachricht"><textarea name="nachricht" rows={5} className={`${field} resize-y`} placeholder="Was ist dir wichtig? Besondere Wünsche, Ablauf, Verwendung der Bilder …" /></Field>
                   </div>
@@ -211,15 +230,16 @@ export default function ContactPage() {
 
               <FadeIn y={30}>
                 <label className="mb-6 flex cursor-pointer items-start gap-4 text-sm font-light leading-relaxed">
-                  <input type="checkbox" required className="mt-1 h-5 w-5 shrink-0 accent-[#B600A8]" />
+                  <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-[#B600A8]" />
                   <span>
                     Ich habe die <a href="#/datenschutz" onClick={goTo} className="underline underline-offset-4">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verarbeitet werden. *
                   </span>
                 </label>
                 <button
                   type="submit"
-                  disabled={status === 'sending'}
-                  className="press inline-block rounded-full px-10 py-4 text-base font-medium uppercase tracking-widest text-white disabled:opacity-60"
+                  disabled={status === 'sending' || !consent}
+                  aria-disabled={!consent}
+                  className="press inline-block rounded-full px-10 py-4 text-base font-medium uppercase tracking-widest text-white disabled:cursor-not-allowed disabled:opacity-50"
                   style={{
                     background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
                     boxShadow: '0px 4px 4px rgba(181, 1, 167, 0.25), 4px 4px 12px #7721B1 inset',
@@ -229,6 +249,7 @@ export default function ContactPage() {
                 >
                   {status === 'sending' ? 'Wird gesendet …' : 'Anfrage senden'}
                 </button>
+                {!consent && <p className="mt-3 text-sm font-light text-[#D7E2EA]/60">Bitte bestätige zuerst die Datenschutzerklärung, dann kannst du die Anfrage senden.</p>}
               </FadeIn>
             </form>
           )}

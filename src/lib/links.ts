@@ -24,6 +24,11 @@ export function openMail(e: MouseEvent<HTMLAnchorElement>) {
 
 export function downloadBlob(blob: Blob, fileName: string) {
   const url = URL.createObjectURL(blob)
+  // Im eingebetteten Frame (z. B. Vorschau) sind Downloads gesperrt: PDF stattdessen in neuem Tab öffnen.
+  if (window.self !== window.top && window.open(url, '_blank', 'noopener')) {
+    setTimeout(() => URL.revokeObjectURL(url), 60000)
+    return
+  }
   const a = document.createElement('a')
   a.href = url
   a.download = fileName

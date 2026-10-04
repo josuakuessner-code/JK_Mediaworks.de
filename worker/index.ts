@@ -30,6 +30,8 @@ async function handleAnfrage(request: Request, env: Env) {
     `Name: ${name}`,
     `E-Mail: ${email}`,
     `Telefon: ${clean(d.phone)}`,
+    `Firma: ${clean(d.firma)}`,
+    `Adresse: ${clean(d.adresse)}`,
     `Anlass: ${clean(d.anlass)}`,
     `Datum: ${clean(d.datum)}`,
     `Ort: ${clean(d.ort)}`,
