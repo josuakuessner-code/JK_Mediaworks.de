@@ -16,7 +16,7 @@ export default function AboutSection() {
   return (
     <section id="about" className="relative flex min-h-screen flex-col items-center justify-center gap-16 px-5 py-20 sm:gap-20 sm:px-8 md:gap-24 md:px-10" style={{ overflowX: 'clip' }}>
       {DECOS.map((d) => (
-        <div key={d.src} className={`pointer-events-none absolute ${d.wrap}`}>
+        <div key={d.src} className={`pointer-events-none absolute hidden xl:block ${d.wrap}`}>
           <FadeIn x={d.x} y={0} delay={d.delay} duration={0.9}>
             <img src={d.src} alt="" loading="lazy" draggable={false} className={`${d.cls} aspect-[3/4] rounded-2xl object-cover`} />
           </FadeIn>
@@ -34,6 +34,15 @@ export default function AboutSection() {
           className="max-w-[560px] text-center font-medium leading-relaxed text-[#D7E2EA]"
           style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }}
         />
+      </div>
+
+      {/* Handy: Fotos im Raster statt in den Ecken, damit nichts Text oder Button überdeckt */}
+      <div className="relative z-10 grid w-full max-w-[340px] grid-cols-2 gap-3 sm:max-w-[420px] xl:hidden">
+        {DECOS.map((d, i) => (
+          <FadeIn key={d.src} y={30} delay={0.05 * i}>
+            <img src={d.src} alt="" loading="lazy" draggable={false} className="aspect-[3/4] w-full rounded-2xl object-cover" />
+          </FadeIn>
+        ))}
       </div>
 
       <div className="relative z-10">
