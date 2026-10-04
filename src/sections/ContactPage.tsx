@@ -112,19 +112,24 @@ export default function ContactPage() {
     }
     setSentData(data)
     setStatus('sending')
-    const { buildAnfragePdf } = await import('../lib/anfrage') // PDF-Bibliothek erst beim Absenden laden
-    const out = buildAnfragePdf(data)
-    setPdf({ blob: out.blob, fileName: out.fileName })
     try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ ...data, website: v('website'), pdfBase64: out.base64, fileName: out.fileName }),
-      })
-      if (!res.ok) throw new Error(String(res.status))
-      setStatus('sent')
+      const { buildAnfragePdf } = await import('../lib/anfrage') // PDF-Bibliothek erst beim Absenden laden
+      const out = buildAnfragePdf(data)
+      setPdf({ blob: out.blob, fileName: out.fileName })
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ ...data, website: v('website'), pdfBase64: out.base64, fileName: out.fileName }),
+        })
+        if (!res.ok) throw new Error(String(res.status))
+        setStatus('sent')
+      } catch {
+        downloadBlob(out.blob, out.fileName)
+        setStatus('error')
+      }
     } catch {
-      downloadBlob(out.blob, out.fileName)
+      // PDF-Baustein nicht ladbar (z. B. veraltete Seite nach einem Update): Mail-Fallback statt endlosem Laden
       setStatus('error')
     }
     window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -177,7 +182,7 @@ export default function ContactPage() {
                   <>
                     <h2 className="hero-heading mb-3 text-3xl font-black uppercase sm:text-4xl">PDF erstellt</h2>
                     <p className="mx-auto mb-8 max-w-[480px] font-light leading-relaxed">
-                      Das automatische Senden hat gerade nicht geklappt. Dein PDF wurde heruntergeladen. Schick es bitte per Mail an <strong className="font-medium">{SITE.email}</strong>. Der Mailtext ist schon vorbereitet, das PDF hängst du einfach an.
+                      Das automatische Senden hat gerade nicht geklappt. Falls ein PDF erstellt wurde, ist es heruntergeladen. Schick es bitte per Mail an <strong className="font-medium">{SITE.email}</strong>. Der Mailtext ist schon vorbereitet, das PDF hängst du einfach an.
                     </p>
                   </>
                 )}

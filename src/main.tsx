@@ -8,6 +8,17 @@ import '@fontsource/kanit/latin-900.css'
 import './index.css'
 import App from './App'
 
+// Veraltete Seite nach einem Update: fehlt ein Baustein, einmal neu laden (nicht in Schleife).
+window.addEventListener('vite:preloadError', () => {
+  try {
+    if (sessionStorage.getItem('reloaded')) return
+    sessionStorage.setItem('reloaded', '1')
+  } catch {
+    return
+  }
+  window.location.reload()
+})
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
