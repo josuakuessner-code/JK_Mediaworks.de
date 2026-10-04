@@ -1,0 +1,64 @@
+import { goTo, openMail } from '../lib/links'
+import { useEffect, type ReactNode } from 'react'
+import { SITE } from '../data/content'
+
+/** Markierte Platzhalter: vor dem Livegang durch deine echten Daten ersetzen. */
+const Ph = ({ children }: { children: ReactNode }) => (
+  <mark className="rounded bg-[#B600A8]/30 px-1 text-[#D7E2EA]">[{children}]</mark>
+)
+
+function Impressum() {
+  return (
+    <>
+      <h1 className="hero-heading mb-8 font-black uppercase leading-none" style={{ fontSize: 'clamp(2.5rem, 8vw, 90px)' }}>Impressum</h1>
+      <p className="mb-6 text-sm text-[#D7E2EA]/60">Angaben gemäß § 5 DDG. Violett markierte Stellen sind Platzhalter und müssen vor Veröffentlichung ausgefüllt werden.</p>
+      <h2>Anbieter</h2>
+      <p>Josua Küßner{' '}<Ph>ggf. Firmenzusatz, z. B. „JK-Mediaworks“, erst nach Gewerbeanmeldung</Ph><br /><Ph>Straße und Hausnummer (ladungsfähige Anschrift, kein Postfach)</Ph><br /><Ph>PLZ</Ph> Wiesbaden</p>
+      <h2>Kontakt</h2>
+      <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a><br />Telefon: <Ph>Telefonnummer als zweiter schneller Kontaktweg</Ph></p>
+      <h2>Umsatzsteuer</h2>
+      <p><Ph>USt-IdNr. / Wirtschafts-Identifikationsnummer, nur falls vorhanden – sonst Abschnitt streichen. Bei Kleinunternehmerregelung: „Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.“</Ph></p>
+    </>
+  )
+}
+
+function Datenschutz() {
+  return (
+    <>
+      <h1 className="hero-heading mb-8 font-black uppercase leading-none" style={{ fontSize: 'clamp(2.5rem, 8vw, 90px)' }}>Datenschutz</h1>
+      <p className="mb-6 text-sm text-[#D7E2EA]/60">Entwurf zur Orientierung, keine Rechtsberatung. Bitte vor Livegang mit einem Generator (z. B. eRecht24, Datenschutz-Generator.de) abgleichen. Die Erklärung muss exakt zur eingesetzten Technik passen.</p>
+      <h2>Verantwortlicher</h2>
+      <p>Josua Küßner, <Ph>Anschrift wie im Impressum</Ph>, E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a></p>
+      <h2>Hosting und Server-Logfiles</h2>
+      <p>Beim Aufruf der Seite verarbeitet der Hoster technisch notwendig deine IP-Adresse, Datum/Uhrzeit, aufgerufene Datei und Browserangaben (Art. 6 Abs. 1 lit. f DSGVO, Interesse am sicheren Betrieb). Hoster: <Ph>Name und Sitz des Hosters</Ph>. Speicherdauer: <Ph>laut Hoster, z. B. 7 Tage</Ph>. Ein Auftragsverarbeitungsvertrag (Art. 28 DSGVO) mit dem Hoster ist <Ph>abzuschließen</Ph>.</p>
+      <h2>Schriftarten</h2>
+      <p>Die Schrift „Kanit“ wird lokal von diesem Server ausgeliefert. Es wird keine Verbindung zu Google oder anderen Schriftanbietern aufgebaut.</p>
+      <h2>Kontaktaufnahme per E-Mail</h2>
+      <p>Wenn du mir schreibst, verarbeite ich deine Angaben zur Bearbeitung der Anfrage (Art. 6 Abs. 1 lit. b bzw. f DSGVO). Die Daten werden gelöscht, sobald die Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
+      <h2>Anfrageformular</h2>
+      <p>Wenn du das Formular nutzt, werden deine Angaben (Name, E-Mail, ggf. Telefon, Anlass, Termin, Ort, Wünsche, Nachricht) im Browser zu einem PDF zusammengefügt und an mich übermittelt, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO). Der Versand erfolgt über den Dienst <Ph>E-Mail-Dienst, z. B. Resend, mit Sitz und Auftragsverarbeitungsvertrag</Ph> und die Serverfunktion bei <Ph>Hoster, z. B. Cloudflare</Ph>. Die Daten werden gelöscht, sobald die Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen. Die Angabe von Telefon, Datum, Budget und Nachricht ist freiwillig.</p>
+      <h2>Cookies, Tracking</h2>
+      <p>Diese Seite setzt keine Cookies und verwendet keine Analyse- oder Marketing-Dienste.</p>
+      <h2>Deine Rechte</h2>
+      <p>Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch. Du kannst dich bei der Aufsichtsbehörde beschweren, in Hessen beim Hessischen Beauftragten für Datenschutz und Informationsfreiheit (HBDI).</p>
+    </>
+  )
+}
+
+export default function LegalPage({ page }: { page: 'impressum' | 'datenschutz' }) {
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    const prev = document.title
+    document.title = `${page === 'impressum' ? 'Impressum' : 'Datenschutz'} – ${SITE.brand}`
+    return () => {
+      document.title = prev
+    }
+  }, [page])
+
+  return (
+    <main lang="de" className="mx-auto min-h-screen max-w-3xl px-6 py-12 text-[#D7E2EA] md:py-20 [&_a]:underline [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-medium [&_h2]:uppercase [&_p]:font-light [&_p]:leading-relaxed">
+      <a href="#" onClick={goTo} className="mb-10 inline-block text-sm font-medium uppercase tracking-wider no-underline transition-opacity duration-200 hover:opacity-70">← Zurück</a>
+      {page === 'impressum' ? <Impressum /> : <Datenschutz />}
+    </main>
+  )
+}

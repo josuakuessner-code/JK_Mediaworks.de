@@ -1,0 +1,239 @@
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { Check, Download, Mail, MapPin } from 'lucide-react'
+import FadeIn from '../components/FadeIn'
+import CopyEmail from '../components/CopyEmail'
+import { SERVICES, SITE } from '../data/content'
+import type { Anfrage } from '../lib/anfrage'
+import { downloadBlob, goTo, openMail } from '../lib/links'
+
+const ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT || '/api/anfrage'
+const ANLAESSE = [...SERVICES.map((s) => s.name), 'Sonstiges']
+const WUENSCHE = ['Schnelle Lieferung (Express)', 'Social-Media-Formate', 'Bilder in Druckauflösung', 'Bildauswahl vor Ort ansehen', 'Rechteübertragung / Lizenz']
+
+const field =
+  'w-full rounded-2xl border border-[#D7E2EA]/20 bg-[#161616] px-5 py-3.5 text-base font-light text-[#D7E2EA] placeholder:text-[#D7E2EA]/35 transition-colors duration-200 focus:border-[#B600A8] focus:outline-none focus-visible:outline-none'
+const labelCls = 'mb-2 block text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/70'
+
+const Card = ({ title, children, delay = 0 }: { title: string; children: ReactNode; delay?: number }) => (
+  <FadeIn y={40} delay={delay}>
+    <fieldset className="rounded-[32px] border-2 border-[#D7E2EA]/25 bg-[#0C0C0C] p-5 sm:rounded-[40px] sm:p-8">
+      <legend className="hero-heading px-2 text-2xl font-black uppercase sm:text-3xl">{title}</legend>
+      <div className="mt-2 grid gap-5 sm:grid-cols-2">{children}</div>
+    </fieldset>
+  </FadeIn>
+)
+
+const Field = ({ label, full, children }: { label: string; full?: boolean; children: ReactNode }) => (
+  <label className={`block ${full ? 'sm:col-span-2' : ''}`}>
+    <span className={labelCls}>{label}</span>
+    {children}
+  </label>
+)
+
+const Chip = ({ active, onClick, children, type }: { active: boolean; onClick: () => void; children: ReactNode; type: 'radio' | 'checkbox' }) => (
+  <button
+    type="button"
+    role={type}
+    aria-checked={active}
+    onClick={onClick}
+    className={`press rounded-full border-2 px-5 py-2.5 text-sm font-medium uppercase tracking-wider transition-colors duration-200 ${
+      active ? 'border-transparent text-white' : 'border-[#D7E2EA]/40 text-[#D7E2EA] hover:bg-[#D7E2EA]/10'
+    }`}
+    style={active ? { background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)' } : undefined}
+  >
+    {children}
+  </button>
+)
+
+type Status = 'idle' | 'sending' | 'sent' | 'error'
+
+export default function ContactPage() {
+  const [anlass, setAnlass] = useState('')
+  const [wuensche, setWuensche] = useState<string[]>([])
+  const [status, setStatus] = useState<Status>('idle')
+  const [pdf, setPdf] = useState<{ blob: Blob; fileName: string } | null>(null)
+  const [anlassMissing, setAnlassMissing] = useState(false)
+
+  useEffect(() => {
+    const prev = document.title
+    document.title = `Anfrage – ${SITE.brand}`
+    return () => {
+      document.title = prev
+    }
+  }, [])
+
+  const toggle = (w: string) => setWuensche((l) => (l.includes(w) ? l.filter((x) => x !== w) : [...l, w]))
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!anlass) {
+      setAnlassMissing(true)
+      document.getElementById('anlass-group')?.scrollIntoView({ block: 'center' })
+      return
+    }
+    const f = new FormData(e.currentTarget)
+    const v = (k: string) => String(f.get(k) ?? '').trim()
+    const data: Anfrage = {
+      name: v('name'), email: v('email'), phone: v('phone'), anlass,
+      datum: v('datum'), zeit: v('zeit'), ort: v('ort'), personen: v('personen'),
+      wuensche, budget: v('budget'), nachricht: v('nachricht'),
+    }
+    setStatus('sending')
+    const { buildAnfragePdf } = await import('../lib/anfrage') // PDF-Bibliothek erst beim Absenden laden
+    const out = buildAnfragePdf(data)
+    setPdf({ blob: out.blob, fileName: out.fileName })
+    try {
+      const res = await fetch(ENDPOINT, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ...data, website: v('website'), pdfBase64: out.base64, fileName: out.fileName }),
+      })
+      if (!res.ok) throw new Error(String(res.status))
+      setStatus('sent')
+    } catch {
+      downloadBlob(out.blob, out.fileName)
+      setStatus('error')
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const done = status === 'sent' || status === 'error'
+
+  return (
+    <main lang="de" className="relative mx-auto min-h-screen max-w-6xl px-5 py-10 text-[#D7E2EA] sm:px-8 md:py-16">
+      <a href="#" onClick={goTo} className="press mb-10 inline-block text-sm font-medium uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">← Zurück</a>
+
+      <FadeIn y={40}>
+        <h1 className="hero-heading mb-6 text-center font-black uppercase leading-none tracking-tight" style={{ fontSize: 'clamp(3rem, 13vw, 170px)' }}>
+          Anfrage
+        </h1>
+      </FadeIn>
+      <FadeIn y={20} delay={0.1}>
+        <p className="mx-auto mb-14 max-w-[600px] text-center font-medium leading-relaxed" style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }}>
+          Erzähl mir kurz, was du vorhast. Aus deinen Angaben entsteht eine PDF-Anfrage, die direkt bei mir im Postfach landet. Ich melde mich mit einem Angebot.
+        </p>
+      </FadeIn>
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-10">
+        <FadeIn x={-60} y={0} duration={0.9} className="lg:sticky lg:top-10 lg:self-start">
+          <aside className="rounded-[32px] border-2 border-[#D7E2EA]/25 p-6 sm:rounded-[40px] sm:p-8">
+            <h2 className="hero-heading mb-6 text-2xl font-black uppercase sm:text-3xl">Direkt schreiben</h2>
+            <p className="mb-3 flex items-center gap-3 text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/70"><Mail size={16} aria-hidden /> E-Mail</p>
+            <CopyEmail className="mb-8 flex-wrap break-all text-lg font-light" />
+            <p className="mb-3 flex items-center gap-3 text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/70"><MapPin size={16} aria-hidden /> Standort</p>
+            <p className="mb-8 text-lg font-light">Wiesbaden und Rhein-Main-Gebiet, für passende Anlässe auch darüber hinaus.</p>
+            <a href={`mailto:${SITE.email}`} onClick={openMail} className="press inline-block rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">
+              Mail öffnen
+            </a>
+          </aside>
+        </FadeIn>
+
+        <div>
+          {done ? (
+            <FadeIn y={30}>
+              <div role="status" className="rounded-[32px] border-2 border-[#D7E2EA]/25 p-8 text-center sm:rounded-[40px] sm:p-12">
+                <span className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full" style={{ background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)' }}>
+                  <Check size={30} aria-hidden />
+                </span>
+                {status === 'sent' ? (
+                  <>
+                    <h2 className="hero-heading mb-3 text-3xl font-black uppercase sm:text-4xl">Anfrage gesendet</h2>
+                    <p className="mx-auto mb-8 max-w-[440px] font-light leading-relaxed">Danke! Deine Anfrage ist als PDF bei mir angekommen. Ich melde mich bei dir.</p>
+                  </>
+                ) : (
+                  <>
+                    <h2 className="hero-heading mb-3 text-3xl font-black uppercase sm:text-4xl">PDF erstellt</h2>
+                    <p className="mx-auto mb-8 max-w-[480px] font-light leading-relaxed">
+                      Das automatische Senden hat gerade nicht geklappt. Dein PDF wurde heruntergeladen. Schick es bitte per Mail an <strong className="font-medium">{SITE.email}</strong>.
+                    </p>
+                  </>
+                )}
+                <div className="flex flex-wrap items-center justify-center gap-4">
+                  {pdf && (
+                    <button type="button" onClick={() => downloadBlob(pdf.blob, pdf.fileName)} className="press inline-flex items-center gap-3 rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">
+                      <Download size={18} aria-hidden /> PDF herunterladen
+                    </button>
+                  )}
+                  {status === 'error' && (
+                    <a href={`mailto:${SITE.email}?subject=${encodeURIComponent('Anfrage ' + SITE.brand)}`} onClick={openMail} className="press inline-block rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">
+                      Mail öffnen
+                    </a>
+                  )}
+                </div>
+              </div>
+            </FadeIn>
+          ) : (
+            <form onSubmit={submit} className="flex flex-col gap-6" noValidate={false} aria-busy={status === 'sending'}>
+              <Card title="Kontakt">
+                <Field label="Name *"><input name="name" required autoComplete="name" className={field} placeholder="Vor- und Nachname" /></Field>
+                <Field label="E-Mail *"><input name="email" type="email" required autoComplete="email" className={field} placeholder="du@beispiel.de" /></Field>
+                <Field label="Telefon (optional)" full><input name="phone" type="tel" autoComplete="tel" className={field} placeholder="Für Rückfragen" /></Field>
+              </Card>
+
+              <FadeIn y={40}>
+                <fieldset id="anlass-group" className="rounded-[32px] border-2 border-[#D7E2EA]/25 p-5 sm:rounded-[40px] sm:p-8">
+                  <legend className="hero-heading px-2 text-2xl font-black uppercase sm:text-3xl">Worum geht es? *</legend>
+                  <div role="radiogroup" aria-label="Anlass" className="mt-3 flex flex-wrap gap-3">
+                    {ANLAESSE.map((a) => (
+                      <Chip key={a} type="radio" active={anlass === a} onClick={() => { setAnlass(a); setAnlassMissing(false) }}>{a}</Chip>
+                    ))}
+                  </div>
+                  {anlassMissing && <p role="alert" className="mt-4 text-sm text-[#BE4C00]">Bitte wähle einen Anlass aus.</p>}
+                </fieldset>
+              </FadeIn>
+
+              <Card title="Termin & Ort">
+                <Field label="Datum"><input name="datum" type="date" className={`${field} [color-scheme:dark]`} /></Field>
+                <Field label="Uhrzeit / Dauer"><input name="zeit" className={field} placeholder="z. B. 14 bis 20 Uhr" /></Field>
+                <Field label="Ort *"><input name="ort" required className={field} placeholder="Stadt oder Location" /></Field>
+                <Field label="Personen / Gäste"><input name="personen" className={field} placeholder="ca. Anzahl" /></Field>
+              </Card>
+
+              <FadeIn y={40}>
+                <fieldset className="rounded-[32px] border-2 border-[#D7E2EA]/25 p-5 sm:rounded-[40px] sm:p-8">
+                  <legend className="hero-heading px-2 text-2xl font-black uppercase sm:text-3xl">Wünsche</legend>
+                  <div role="group" aria-label="Wünsche" className="mt-3 flex flex-wrap gap-3">
+                    {WUENSCHE.map((w) => (
+                      <Chip key={w} type="checkbox" active={wuensche.includes(w)} onClick={() => toggle(w)}>{w}</Chip>
+                    ))}
+                  </div>
+                  <div className="mt-6 grid gap-5">
+                    <Field label="Budgetvorstellung (optional)"><input name="budget" className={field} placeholder="z. B. Rahmen oder Festpreis" /></Field>
+                    <Field label="Nachricht"><textarea name="nachricht" rows={5} className={`${field} resize-y`} placeholder="Was ist dir wichtig? Besondere Wünsche, Ablauf, Verwendung der Bilder …" /></Field>
+                  </div>
+                </fieldset>
+              </FadeIn>
+
+              {/* Honeypot gegen Spam-Bots, für Menschen unsichtbar */}
+              <div aria-hidden className="absolute left-[-9999px] h-0 w-0 overflow-hidden">
+                <label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
+              </div>
+
+              <FadeIn y={30}>
+                <label className="mb-6 flex cursor-pointer items-start gap-4 text-sm font-light leading-relaxed">
+                  <input type="checkbox" required className="mt-1 h-5 w-5 shrink-0 accent-[#B600A8]" />
+                  <span>
+                    Ich habe die <a href="#/datenschutz" onClick={goTo} className="underline underline-offset-4">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verarbeitet werden. *
+                  </span>
+                </label>
+                <button
+                  type="submit"
+                  disabled={status === 'sending'}
+                  className="press inline-block rounded-full px-10 py-4 text-base font-medium uppercase tracking-widest text-white disabled:opacity-60"
+                  style={{
+                    background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
+                    boxShadow: '0px 4px 4px rgba(181, 1, 167, 0.25), 4px 4px 12px #7721B1 inset',
+                    outline: '2px solid white',
+                    outlineOffset: '-3px',
+                  }}
+                >
+                  {status === 'sending' ? 'Wird gesendet …' : 'Anfrage senden'}
+                </button>
+              </FadeIn>
+            </form>
+          )}
+        </div>
+      </div>
+    </main>
+  )
+}
