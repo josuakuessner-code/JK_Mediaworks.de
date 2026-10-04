@@ -10,6 +10,7 @@ export type Anfrage = {
   anlass: string
   titel: string
   datum: string
+  datumBis: string
   zeit: string
   ort: string
   personen: string
@@ -82,7 +83,8 @@ export function buildAnfragePdf(a: Anfrage) {
   section('Anlass')
   row('Art', a.anlass)
   row('Titel / Beschreibung', a.titel)
-  row('Datum', de(a.datum))
+  row(a.datumBis ? 'Von' : 'Datum', de(a.datum))
+  row('Bis', de(a.datumBis))
   row('Uhrzeit / Dauer', a.zeit)
   row('Ort', a.ort)
   row('Personen / Gäste', a.personen)

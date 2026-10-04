@@ -9,7 +9,7 @@ export function buildMailText(a: Partial<Anfrage>) {
   const subject = anlass ? `Anfrage ${anlass}${a.titel ? `: ${a.titel}` : ''}` : `Anfrage ${SITE.brand}`
   const parts: string[] = ['Hallo Josua,', '']
   const was = anlass ? `für ${anlass}${a.titel ? ` („${a.titel}“)` : ''}` : 'für ein Fotoprojekt'
-  const wann = [a.datum ? `am ${de(a.datum)}` : '', a.zeit ? `(${a.zeit})` : '', a.ort ? `in ${a.ort}` : ''].filter(Boolean).join(' ')
+  const wann = [a.datum ? (a.datumBis ? `vom ${de(a.datum)} bis ${de(a.datumBis)}` : `am ${de(a.datum)}`) : '', a.zeit ? `(${a.zeit})` : '', a.ort ? `in ${a.ort}` : ''].filter(Boolean).join(' ')
   parts.push(`ich interessiere mich ${was}${wann ? ` ${wann}` : ''} und würde gern ein Angebot von dir erhalten.`)
   if (a.personen) parts.push(`Es werden etwa ${a.personen} Personen erwartet.`)
   const formate = [...(a.formate ?? []), a.formatEigen ?? ''].filter((x) => x.trim())

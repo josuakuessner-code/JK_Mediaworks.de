@@ -34,7 +34,7 @@ async function handleAnfrage(request: Request, env: Env) {
     `Adresse: ${clean(d.adresse)}`,
     `Anlass: ${clean(d.anlass)}`,
     `Titel: ${clean(d.titel, 160)}`,
-    `Datum: ${clean(d.datum)}`,
+    `Datum: ${clean(d.datum)}${d.datumBis ? ` bis ${clean(d.datumBis)}` : ''}`,
     `Ort: ${clean(d.ort)}`,
     '',
     String(d.nachricht ?? '').slice(0, 4000),

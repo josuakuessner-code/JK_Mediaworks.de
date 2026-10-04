@@ -64,6 +64,8 @@ export default function ContactPage() {
   const [consent, setConsent] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
   const [pdf, setPdf] = useState<{ blob: Blob; fileName: string } | null>(null)
+  const [mehrtaegig, setMehrtaegig] = useState(false)
+  const [datumVon, setDatumVon] = useState('')
   const [sentData, setSentData] = useState<Anfrage | null>(null)
   const [anlassMissing, setAnlassMissing] = useState(false)
 
@@ -82,7 +84,7 @@ export default function ContactPage() {
     const v = (k: string) => String(f?.get(k) ?? '').trim()
     return {
       name: v('name'), email: v('email'), phone: v('phone'), firma: v('firma'), adresse: v('adresse'), anlass, titel: v('titel'),
-      datum: v('datum'), zeit: v('zeit'), ort: v('ort'), personen: v('personen'), express, formate, formatEigen: v('formatEigen'),
+      datum: v('datum'), datumBis: mehrtaegig ? v('datumBis') : '', zeit: v('zeit'), ort: v('ort'), personen: v('personen'), express, formate, formatEigen: v('formatEigen'),
       budget: v('budget'), nachricht: v('nachricht'),
     }
   }
@@ -105,7 +107,7 @@ export default function ContactPage() {
     const v = (k: string) => String(f.get(k) ?? '').trim()
     const data: Anfrage = {
       name: v('name'), email: v('email'), phone: v('phone'), titel: v('titel'), firma: v('firma'), adresse: v('adresse'), anlass,
-      datum: v('datum'), zeit: v('zeit'), ort: v('ort'), personen: v('personen'),
+      datum: v('datum'), datumBis: mehrtaegig ? v('datumBis') : '', zeit: v('zeit'), ort: v('ort'), personen: v('personen'),
       express, formate, formatEigen: v('formatEigen'), budget: v('budget'), nachricht: v('nachricht'),
     }
     setSentData(data)
@@ -220,8 +222,16 @@ export default function ContactPage() {
               </FadeIn>
 
               <Card title="Termin & Ort">
-                <Field label="Datum"><input name="datum" type="date" className={`${field} [color-scheme:dark]`} /></Field>
-                <Field label="Uhrzeit / Dauer"><input name="zeit" className={field} placeholder="z. B. 14 bis 20 Uhr" /></Field>
+                <Field label={mehrtaegig ? 'Von' : 'Datum'}><input name="datum" type="date" value={datumVon} onChange={(e) => setDatumVon(e.target.value)} className={`${field} [color-scheme:dark]`} /></Field>
+                {mehrtaegig ? (
+                  <Field label="Bis"><input name="datumBis" type="date" min={datumVon || undefined} required className={`${field} [color-scheme:dark]`} /></Field>
+                ) : (
+                  <Field label="Uhrzeit / Dauer"><input name="zeit" className={field} placeholder="z. B. 14 bis 20 Uhr" /></Field>
+                )}
+                <div className="sm:col-span-2">
+                  <Chip type="checkbox" active={mehrtaegig} onClick={() => setMehrtaegig((v) => !v)}>Mehrtägiger Termin</Chip>
+                </div>
+                {mehrtaegig && <Field label="Uhrzeit / Dauer pro Tag" full><input name="zeit" className={field} placeholder="z. B. täglich 10 bis 18 Uhr" /></Field>}
                 <Field label="Ort *"><input name="ort" required className={field} placeholder="Stadt oder Location" /></Field>
                 <Field label="Personen / Gäste"><input name="personen" className={field} placeholder="ca. Anzahl" /></Field>
               </Card>
