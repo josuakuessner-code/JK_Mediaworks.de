@@ -26,8 +26,8 @@ export default function ContactSection() {
       <footer className="flex flex-col items-center justify-between gap-4 border-t border-[#D7E2EA]/15 px-6 py-8 text-sm font-light text-[#D7E2EA]/70 sm:flex-row md:px-10">
         <span>© {new Date().getFullYear()} {SITE.brand}</span>
         <nav aria-label="Rechtliches" className="flex gap-6">
-          <a href="#/impressum" onClick={goTo} className="uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">Impressum</a>
-          <a href="#/datenschutz" onClick={goTo} className="uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">Datenschutz</a>
+          <a href="/impressum" onClick={goTo} className="uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">Impressum</a>
+          <a href="/datenschutz" onClick={goTo} className="uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">Datenschutz</a>
         </nav>
       </footer>
     </>

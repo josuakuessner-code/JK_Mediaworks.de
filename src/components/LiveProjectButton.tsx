@@ -1,6 +1,6 @@
 import { goTo } from '../lib/links'
 
-export default function LiveProjectButton({ href = '#/kontakt' }: { href?: string }) {
+export default function LiveProjectButton({ href = '/kontakt' }: { href?: string }) {
   return (
     <a
       href={href}

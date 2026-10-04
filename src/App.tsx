@@ -9,10 +9,24 @@ import ContactSection from './sections/ContactSection'
 import LegalPage from './sections/LegalPage'
 import ContactPage from './sections/ContactPage'
 
-const route = (): 'home' | 'impressum' | 'datenschutz' | 'kontakt' => {
-  const h = window.location.hash
-  return h === '#/kontakt' ? 'kontakt' : h === '#/impressum' ? 'impressum' : h === '#/datenschutz' ? 'datenschutz' : 'home'
+const PAGES = ['kontakt', 'impressum', 'datenschutz'] as const
+type Page = 'home' | (typeof PAGES)[number]
+
+const route = (): Page => {
+  const seg = window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase()
+  return (PAGES as readonly string[]).includes(seg) ? (seg as Page) : 'home'
 }
+
+const TITLES: Record<Page, string> = {
+  home: 'JK-Mediaworks | Fotograf Wiesbaden: Sport, Konzerte, Hochzeiten',
+  kontakt: 'Anfrage | JK-Mediaworks',
+  impressum: 'Impressum | JK-Mediaworks',
+  datenschutz: 'Datenschutz | JK-Mediaworks',
+}
+
+// Alte Links (#/kontakt) einmalig auf echte Pfade umschreiben.
+const legacy = window.location.hash.match(/^#\/(kontakt|impressum|datenschutz)$/)
+if (legacy) window.history.replaceState(null, '', `/${legacy[1]}`)
 
 export default function App() {
   const [page, setPage] = useState(route())
@@ -21,9 +35,13 @@ export default function App() {
       setPage(route())
       window.scrollTo(0, 0)
     }
-    window.addEventListener('hashchange', on)
-    return () => window.removeEventListener('hashchange', on)
+    window.addEventListener('popstate', on)
+    return () => window.removeEventListener('popstate', on)
   }, [])
+
+  useEffect(() => {
+    document.title = TITLES[page]
+  }, [page])
 
   return (
     <MotionConfig reducedMotion="user">

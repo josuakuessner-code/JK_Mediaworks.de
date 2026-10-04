@@ -3,7 +3,7 @@ const LINKS = [
   { label: 'Über mich', href: '#about' },
   { label: 'Leistungen', href: '#services' },
   { label: 'Projekte', href: '#projects' },
-  { label: 'Kontakt', href: '#/kontakt' },
+  { label: 'Kontakt', href: '/kontakt' },
 ]
 
 export default function Navbar() {

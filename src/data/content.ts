@@ -1,11 +1,11 @@
 /** Texte der Seite. Hier anpassen. Kundennamen nur mit Freigabe des Kunden verwenden. */
 export const SITE = {
   brand: 'JK-Mediaworks',
-  name: 'josua',
+  name: 'Josua',
   email: 'josua.kuessner@gmail.com',
-  heroLine: 'ein fotograf, der starke und unvergessliche momente festhält',
+  heroLine: 'Ein Fotograf, der starke und unvergessliche Momente festhält',
   aboutText:
-    'Ich bin Fotograf aus Wiesbaden. Ich fotografiere Volleyballspiele, Konzerte und Hochzeiten, mit Fokus auf Atmosphäre, Sport und saubere Bildbearbeitung. Lass uns gemeinsam etwas Unvergessliches schaffen!',
+    'Ich bin Josua, in Wiesbaden aufgewachsen und hier zu Hause. Nach dem Abitur lerne ich bei TV Skyline Mediengestalter Bild und Ton. Mit meinen Fotos und ihrer Bearbeitung will ich Emotionen wecken, am liebsten in besonderen Looks und mit dem Charme alter Filme. Früher habe ich selbst leistungsorientiert Volleyball gespielt, heute halte ich die Spiele mit der Kamera fest.',
 }
 
 export const SERVICES = [

@@ -13,7 +13,7 @@ function Impressum() {
       <h1 className="hero-heading mb-8 font-black uppercase leading-none" style={{ fontSize: 'clamp(2.5rem, 8vw, 90px)' }}>Impressum</h1>
       <p className="mb-6 text-sm text-[#D7E2EA]/60">Angaben gemäß § 5 DDG. Violett markierte Stellen sind Platzhalter und müssen vor Veröffentlichung ausgefüllt werden.</p>
       <h2>Anbieter</h2>
-      <p>Josua Küßner{' '}<Ph>ggf. Firmenzusatz, z. B. „JK-Mediaworks“, erst nach Gewerbeanmeldung</Ph><br />Freesienweg 27<br />65201 Wiesbaden</p>
+      <p>Josua Küßner<br />JK-Mediaworks<br />Freesienweg 27<br />65201 Wiesbaden</p>
       <h2>Kontakt</h2>
       <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a><br />Telefon: <Ph>Telefonnummer als zweiter schneller Kontaktweg</Ph></p>
       <h2>Umsatzsteuer</h2>
@@ -57,7 +57,7 @@ export default function LegalPage({ page }: { page: 'impressum' | 'datenschutz' 
 
   return (
     <main lang="de" className="mx-auto min-h-screen max-w-3xl px-6 py-12 text-[#D7E2EA] md:py-20 [&_a]:underline [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-medium [&_h2]:uppercase [&_p]:font-light [&_p]:leading-relaxed">
-      <a href="#" onClick={goTo} className="mb-10 inline-block text-sm font-medium uppercase tracking-wider no-underline transition-opacity duration-200 hover:opacity-70">← Zurück</a>
+      <a href="/" onClick={goTo} className="mb-10 inline-block text-sm font-medium uppercase tracking-wider no-underline transition-opacity duration-200 hover:opacity-70">← Zurück</a>
       {page === 'impressum' ? <Impressum /> : <Datenschutz />}
     </main>
   )

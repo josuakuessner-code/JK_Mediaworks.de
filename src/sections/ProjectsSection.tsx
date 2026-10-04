@@ -36,7 +36,7 @@ function Card({ index, total }: { index: number; total: number }) {
         </div>
         <div className={`grid gap-3 sm:gap-4 ${imgs.length === 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-3'}`}>
           {imgs.map((src, i) => (
-            <img key={src} src={src} alt={`${p.name}, Foto ${i + 1}`} loading="lazy" className={`aspect-[4/5] w-full bg-[#161616] object-cover rounded-2xl sm:rounded-3xl md:rounded-[36px]`} />
+            <img key={src} src={src} alt={`${p.category}: ${p.name}, Aufnahme ${i + 1} von ${imgs.length}`} loading="lazy" className={`aspect-[4/5] w-full bg-[#161616] object-cover rounded-2xl sm:rounded-3xl md:rounded-[36px]`} />
           ))}
         </div>
       </motion.article>
