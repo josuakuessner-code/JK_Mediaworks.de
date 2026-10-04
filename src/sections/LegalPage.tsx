@@ -32,6 +32,10 @@ function Datenschutz() {
       <p>Wenn du mir schreibst, verarbeite ich deine Angaben zur Bearbeitung der Anfrage (Art. 6 Abs. 1 lit. b bzw. f DSGVO). Die Daten werden gelöscht, sobald die Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
       <h2>Anfrageformular</h2>
       <p>Wenn du das Formular nutzt, werden deine Angaben (Name, E-Mail, ggf. Telefon, Firma, Adresse, Anlass, Termin, Ort, Wünsche, Nachricht) im Browser zu einem PDF zusammengefügt und an mich übermittelt, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO). Der Versand erfolgt über den Dienst Resend (Resend, Inc., San Francisco, USA, mit Auftragsverarbeitungsvertrag) und die Serverfunktion bei Cloudflare (siehe Hosting). Die Daten werden gelöscht, sobald die Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen. Die Angabe von Telefon, Datum, Budget und Nachricht ist freiwillig.</p>
+      <h2>Spamschutz (Cloudflare Turnstile)</h2>
+      <p>Das Anfrageformular ist mit Cloudflare Turnstile gegen automatisierten Missbrauch geschützt. Dabei lädt dein Browser ein Skript von Cloudflare, Inc. (USA) und es werden technische Angaben wie IP-Adresse und Browsermerkmale zur Prüfung übermittelt (Art. 6 Abs. 1 lit. f DSGVO, Interesse am Schutz vor Spam). Turnstile setzt dafür keine Werbe-Cookies.</p>
+      <h2>Bestätigungs-E-Mail</h2>
+      <p>Nach dem Absenden erhältst du an die angegebene Adresse eine kurze Bestätigung. Sie wird über Resend versendet (siehe Anfrageformular).</p>
       <h2>Cookies, Tracking</h2>
       <p>Diese Seite setzt keine Cookies und verwendet keine Analyse- oder Marketing-Dienste.</p>
       <h2>Deine Rechte</h2>

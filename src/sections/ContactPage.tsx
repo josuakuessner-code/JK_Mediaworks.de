@@ -7,6 +7,8 @@ import type { Anfrage } from '../lib/anfrage'
 import { downloadBlob, goTo, openMail } from '../lib/links'
 import { mailtoHref } from '../lib/mailtext'
 
+const TURNSTILE_KEY = import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined
+
 const ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT || '/api/anfrage'
 const ANLAESSE = [...SERVICES.flatMap((s) => (s.name === 'Konzerte & Events' ? ['Konzerte', 'Events'] : [s.name])), 'Sonstiges']
 const FORMATE = [
@@ -71,6 +73,15 @@ export default function ContactPage() {
   const [anlassMissing, setAnlassMissing] = useState(false)
 
   useEffect(() => {
+    if (!TURNSTILE_KEY || document.getElementById('cf-turnstile-js')) return
+    const s = document.createElement('script')
+    s.id = 'cf-turnstile-js'
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js'
+    s.async = true
+    document.head.appendChild(s)
+  }, [])
+
+  useEffect(() => {
     const prev = document.title
     document.title = `Anfrage – ${SITE.brand}`
     return () => {
@@ -122,7 +133,7 @@ export default function ContactPage() {
           signal: AbortSignal.timeout(25000), // nie endlos „Wird gesendet …“
           method: 'POST',
           headers: { 'content-type': 'application/json' },
-          body: JSON.stringify({ ...data, website: v('website'), pdfBase64: out.base64, fileName: out.fileName }),
+          body: JSON.stringify({ ...data, website: v('website'), turnstile: v('cf-turnstile-response'), pdfBase64: out.base64, fileName: out.fileName }),
         })
         if (!res.ok) {
           const info = await res.json().catch(() => null)
@@ -263,7 +274,7 @@ export default function ContactPage() {
                   </div>
                   <div className="mt-6 grid gap-5">
                     <Field label="Anderes Format (optional)"><input name="formatEigen" className={field} placeholder="z. B. 5:7 oder 1080 × 1350 px" /></Field>
-                    <Field label="Budgetvorstellung (optional)"><input name="budget" className={field} placeholder="z. B. Rahmen oder Festpreis" /></Field>
+                    <Field label="Budgetvorstellung (optional, Preise gestalte ich individuell)"><input name="budget" className={field} placeholder="z. B. Rahmen oder Festpreis" /></Field>
                     <Field label="Nachricht"><textarea name="nachricht" rows={5} className={`${field} resize-y`} placeholder="Was ist dir wichtig? Besondere Wünsche, Ablauf, Verwendung der Bilder …" /></Field>
                   </div>
                 </fieldset>
@@ -275,6 +286,7 @@ export default function ContactPage() {
               </div>
 
               <FadeIn y={30}>
+                {TURNSTILE_KEY && <div className="cf-turnstile mb-6" data-sitekey={TURNSTILE_KEY} data-theme="dark" data-language="de" />}
                 <label className="mb-6 flex cursor-pointer items-start gap-4 text-sm font-light leading-relaxed">
                   <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-[#B600A8]" />
                   <span>
