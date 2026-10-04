@@ -1,10 +1,11 @@
-import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { useEffect, useState, type FormEvent, type MouseEvent, type ReactNode } from 'react'
 import { Check, Download, Mail, MapPin } from 'lucide-react'
 import FadeIn from '../components/FadeIn'
 import CopyEmail from '../components/CopyEmail'
 import { SERVICES, SITE } from '../data/content'
 import type { Anfrage } from '../lib/anfrage'
 import { downloadBlob, goTo, openMail } from '../lib/links'
+import { mailtoHref } from '../lib/mailtext'
 
 const ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT || '/api/anfrage'
 const ANLAESSE = [...SERVICES.flatMap((s) => (s.name === 'Konzerte & Events' ? ['Konzerte', 'Events'] : [s.name])), 'Sonstiges']
@@ -63,6 +64,7 @@ export default function ContactPage() {
   const [consent, setConsent] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
   const [pdf, setPdf] = useState<{ blob: Blob; fileName: string } | null>(null)
+  const [sentData, setSentData] = useState<Anfrage | null>(null)
   const [anlassMissing, setAnlassMissing] = useState(false)
 
   useEffect(() => {
@@ -72,6 +74,22 @@ export default function ContactPage() {
       document.title = prev
     }
   }, [])
+
+  // Liest die aktuell ausgewählten/eingetragenen Werte, um daraus einen passenden Mailtext zu bauen.
+  const current = (): Partial<Anfrage> => {
+    const form = document.getElementById('anfrage-form') as HTMLFormElement | null
+    const f = form ? new FormData(form) : null
+    const v = (k: string) => String(f?.get(k) ?? '').trim()
+    return {
+      name: v('name'), email: v('email'), phone: v('phone'), firma: v('firma'), adresse: v('adresse'), anlass, titel: v('titel'),
+      datum: v('datum'), zeit: v('zeit'), ort: v('ort'), personen: v('personen'), express, formate, formatEigen: v('formatEigen'),
+      budget: v('budget'), nachricht: v('nachricht'),
+    }
+  }
+  const fillMailto = (e: MouseEvent<HTMLAnchorElement>) => {
+    e.currentTarget.href = mailtoHref(sentData ?? current())
+    openMail(e)
+  }
 
   const toggle = (w: string) => setFormate((l) => (l.includes(w) ? l.filter((x) => x !== w) : [...l, w]))
 
@@ -90,6 +108,7 @@ export default function ContactPage() {
       datum: v('datum'), zeit: v('zeit'), ort: v('ort'), personen: v('personen'),
       express, formate, formatEigen: v('formatEigen'), budget: v('budget'), nachricht: v('nachricht'),
     }
+    setSentData(data)
     setStatus('sending')
     const { buildAnfragePdf } = await import('../lib/anfrage') // PDF-Bibliothek erst beim Absenden laden
     const out = buildAnfragePdf(data)
@@ -134,7 +153,7 @@ export default function ContactPage() {
             <CopyEmail className="mb-8 flex-wrap break-all text-lg font-light" />
             <p className="mb-3 flex items-center gap-3 text-xs font-medium uppercase tracking-widest text-[#D7E2EA]/70"><MapPin size={16} aria-hidden /> Standort</p>
             <p className="mb-8 text-lg font-light">Wiesbaden und Rhein-Main-Gebiet, für passende Anlässe auch darüber hinaus.</p>
-            <a href={`mailto:${SITE.email}`} onClick={openMail} className="press inline-block rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">
+            <a href={`mailto:${SITE.email}`} onClick={fillMailto} className="press inline-block rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">
               Mail öffnen
             </a>
           </aside>
@@ -156,7 +175,7 @@ export default function ContactPage() {
                   <>
                     <h2 className="hero-heading mb-3 text-3xl font-black uppercase sm:text-4xl">PDF erstellt</h2>
                     <p className="mx-auto mb-8 max-w-[480px] font-light leading-relaxed">
-                      Das automatische Senden hat gerade nicht geklappt. Dein PDF wurde heruntergeladen. Schick es bitte per Mail an <strong className="font-medium">{SITE.email}</strong>.
+                      Das automatische Senden hat gerade nicht geklappt. Dein PDF wurde heruntergeladen. Schick es bitte per Mail an <strong className="font-medium">{SITE.email}</strong>. Der Mailtext ist schon vorbereitet, das PDF hängst du einfach an.
                     </p>
                   </>
                 )}
@@ -167,7 +186,7 @@ export default function ContactPage() {
                     </button>
                   )}
                   {status === 'error' && (
-                    <a href={`mailto:${SITE.email}?subject=${encodeURIComponent('Anfrage ' + SITE.brand)}`} onClick={openMail} className="press inline-block rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">
+                    <a href={mailtoHref(sentData ?? {})} onClick={fillMailto} className="press inline-block rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">
                       Mail öffnen
                     </a>
                   )}
@@ -175,7 +194,7 @@ export default function ContactPage() {
               </div>
             </FadeIn>
           ) : (
-            <form onSubmit={submit} className="flex flex-col gap-6" noValidate={false} aria-busy={status === 'sending'}>
+            <form id="anfrage-form" onSubmit={submit} className="flex flex-col gap-6" noValidate={false} aria-busy={status === 'sending'}>
               <Card title="Kontakt">
                 <Field label="Name *"><input name="name" required autoComplete="name" className={field} placeholder="Vor- und Nachname" /></Field>
                 <Field label="E-Mail *"><input name="email" type="email" required autoComplete="email" className={field} placeholder="du@beispiel.de" /></Field>
