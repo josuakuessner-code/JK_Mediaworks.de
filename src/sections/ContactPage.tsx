@@ -66,6 +66,7 @@ export default function ContactPage() {
   const [pdf, setPdf] = useState<{ blob: Blob; fileName: string } | null>(null)
   const [mehrtaegig, setMehrtaegig] = useState(false)
   const [datumVon, setDatumVon] = useState('')
+  const [errorInfo, setErrorInfo] = useState('')
   const [sentData, setSentData] = useState<Anfrage | null>(null)
   const [anlassMissing, setAnlassMissing] = useState(false)
 
@@ -118,17 +119,23 @@ export default function ContactPage() {
       setPdf({ blob: out.blob, fileName: out.fileName })
       try {
         const res = await fetch(ENDPOINT, {
+          signal: AbortSignal.timeout(25000), // nie endlos „Wird gesendet …“
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ ...data, website: v('website'), pdfBase64: out.base64, fileName: out.fileName }),
         })
-        if (!res.ok) throw new Error(String(res.status))
+        if (!res.ok) {
+          const info = await res.json().catch(() => null)
+          throw new Error(`${res.status}${info?.detail ? ` ${info.detail}` : info?.error ? ` ${info.error}` : ''}`)
+        }
         setStatus('sent')
-      } catch {
+      } catch (err) {
+        setErrorInfo(err instanceof Error ? err.message : '')
         downloadBlob(out.blob, out.fileName)
         setStatus('error')
       }
-    } catch {
+    } catch (err) {
+      setErrorInfo(err instanceof Error ? `PDF: ${err.message}` : 'PDF konnte nicht erstellt werden')
       // PDF-Baustein nicht ladbar (z. B. veraltete Seite nach einem Update): Mail-Fallback statt endlosem Laden
       setStatus('error')
     }
@@ -186,6 +193,7 @@ export default function ContactPage() {
                     </p>
                   </>
                 )}
+                {status === 'error' && errorInfo && <p className="mx-auto mb-6 max-w-[480px] break-words text-xs font-light text-[#D7E2EA]/50">Technische Info: {errorInfo}</p>}
                 <div className="flex flex-wrap items-center justify-center gap-4">
                   {pdf && (
                     <button type="button" onClick={() => downloadBlob(pdf.blob, pdf.fileName)} className="press inline-flex items-center gap-3 rounded-full border-2 border-[#D7E2EA] px-8 py-3 text-sm font-medium uppercase tracking-widest transition-colors duration-200 hover:bg-[#D7E2EA]/10">

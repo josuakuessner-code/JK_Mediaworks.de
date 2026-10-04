@@ -42,6 +42,7 @@ async function handleAnfrage(request: Request, env: Env) {
     'Die vollständige Anfrage liegt als PDF bei.',
   ]
   const res = await fetch('https://api.resend.com/emails', {
+    signal: AbortSignal.timeout(15000),
     method: 'POST',
     headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json' },
     body: JSON.stringify({
@@ -53,7 +54,9 @@ async function handleAnfrage(request: Request, env: Env) {
       attachments: [{ filename: clean(d.fileName, 80) || 'Anfrage.pdf', content: pdf }],
     }),
   })
-  return res.ok ? json({ ok: true }) : json({ ok: false, error: 'mail-failed' }, 502)
+  if (res.ok) return json({ ok: true })
+  const detail = await res.text().then((t) => clean(t, 300)).catch(() => '')
+  return json({ ok: false, error: 'mail-failed', detail }, 502)
 }
 
 export default {
