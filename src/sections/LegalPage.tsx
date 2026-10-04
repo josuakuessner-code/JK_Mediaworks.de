@@ -1,23 +1,18 @@
 import { goTo, openMail } from '../lib/links'
-import { useEffect, type ReactNode } from 'react'
+import { useEffect } from 'react'
 import { SITE } from '../data/content'
-
-/** Markierte Platzhalter: vor dem Livegang durch deine echten Daten ersetzen. */
-const Ph = ({ children }: { children: ReactNode }) => (
-  <mark className="rounded bg-[#B600A8]/30 px-1 text-[#D7E2EA]">[{children}]</mark>
-)
 
 function Impressum() {
   return (
     <>
       <h1 className="hero-heading mb-8 font-black uppercase leading-none" style={{ fontSize: 'clamp(2.5rem, 8vw, 90px)' }}>Impressum</h1>
-      <p className="mb-6 text-sm text-[#D7E2EA]/60">Angaben gemäß § 5 DDG. Violett markierte Stellen sind Platzhalter und müssen vor Veröffentlichung ausgefüllt werden.</p>
+      <p className="mb-6 text-sm text-[#D7E2EA]/60">Angaben gemäß § 5 DDG.</p>
       <h2>Anbieter</h2>
       <p>Josua Küßner<br />JK-Mediaworks<br />Freesienweg 27<br />65201 Wiesbaden</p>
       <h2>Kontakt</h2>
-      <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a><br />Telefon: <Ph>Telefonnummer als zweiter schneller Kontaktweg</Ph></p>
+      <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a><br />Telefon: <a href="tel:+4917642487640">+49 176 42487640</a></p>
       <h2>Umsatzsteuer</h2>
-      <p><Ph>USt-IdNr. / Wirtschafts-Identifikationsnummer, nur falls vorhanden – sonst Abschnitt streichen. Bei Kleinunternehmerregelung: „Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.“</Ph></p>
+      <p>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</p>
     </>
   )
 }
