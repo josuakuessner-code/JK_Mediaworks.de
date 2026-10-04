@@ -15,7 +15,7 @@ export default function ContactSection() {
         </FadeIn>
         <FadeIn y={20} delay={0.1}>
           <p className="max-w-[560px] text-center font-medium leading-relaxed text-[#D7E2EA]" style={{ fontSize: 'clamp(1rem, 2vw, 1.35rem)' }}>
-            Steht ein Spiel, ein Konzert oder eine Hochzeit an? Schreib mir kurz Datum, Ort und was du dir vorstellst. Preise gestalte ich individuell, sie richten sich nach Zeit und Aufwand.
+            Steht ein Spiel, ein Konzert oder eine Hochzeit an? Schreib mir kurz Datum, Ort und was du dir vorstellst. Preise gestalte ich individuell, sie richten sich nach Zeit und Aufwand. Die Bilder liefere ich nach Absprache: schon während des Events, am selben Abend oder zum gewünschten Zeitpunkt.
           </p>
         </FadeIn>
         <FadeIn y={20} delay={0.2}>

@@ -1,5 +1,6 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
+import Lightbox from '../components/Lightbox'
 import FadeIn from '../components/FadeIn'
 import LiveProjectButton from '../components/LiveProjectButton'
 import { PROJECT_IMAGES } from '../data/assets'
@@ -15,6 +16,8 @@ function Card({ index, total }: { index: number; total: number }) {
   const scale = useTransform(scrollYProgress, [0, 1], [1, targetScale])
   const p = PROJECTS[index]
   const imgs = PROJECT_IMAGES[index]
+  const [open, setOpen] = useState<number | null>(null)
+  const items = imgs.map((src, i) => ({ src, alt: `${p.category}: ${p.name}, Aufnahme ${i + 1} von ${imgs.length}` }))
 
   return (
     <div ref={ref} className="h-[85vh]">
@@ -36,10 +39,13 @@ function Card({ index, total }: { index: number; total: number }) {
         </div>
         <div className={`grid gap-3 sm:gap-4 ${imgs.length === 4 ? 'grid-cols-2 sm:grid-cols-4' : 'grid-cols-3'}`}>
           {imgs.map((src, i) => (
-            <img key={src} src={src} alt={`${p.category}: ${p.name}, Aufnahme ${i + 1} von ${imgs.length}`} loading="lazy" className={`aspect-[4/5] w-full bg-[#161616] object-cover rounded-2xl sm:rounded-3xl md:rounded-[36px]`} />
+            <button key={src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${items[i].alt}`} className="block cursor-zoom-in overflow-hidden rounded-2xl sm:rounded-3xl md:rounded-[36px]">
+              <img src={src} alt={items[i].alt} loading="lazy" className="aspect-[4/5] w-full bg-[#161616] object-cover transition-transform duration-500 hover:scale-[1.03]" />
+            </button>
           ))}
         </div>
       </motion.article>
+      {open !== null && <Lightbox images={items} index={open} onIndex={setOpen} onClose={() => setOpen(null)} />}
     </div>
   )
 }

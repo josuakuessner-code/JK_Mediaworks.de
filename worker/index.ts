@@ -32,7 +32,7 @@ async function sendConfirmation(env: Env, to: string, name: string, anlass: stri
     '',
     `vielen Dank für deine Anfrage (${anlass}). Sie ist bei mir angekommen und ich melde mich so schnell wie möglich bei dir, in der Regel innerhalb von 1 bis 2 Tagen.`,
     '',
-    'Preise gestalte ich individuell nach Zeit und Aufwand, du bekommst von mir ein passendes Angebot.',
+    'Preise gestalte ich individuell nach Zeit und Aufwand, du bekommst von mir ein passendes Angebot. Die Bilder liefere ich nach Absprache, zum Beispiel schon während des Events, am selben Abend oder zum gewünschten Zeitpunkt.',
     '',
     'Viele Grüße',
     'Josua Küßner',
