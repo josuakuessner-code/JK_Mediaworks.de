@@ -7,7 +7,8 @@ import type { Anfrage } from '../lib/anfrage'
 import { downloadBlob, goTo, openMail } from '../lib/links'
 import { mailtoHref } from '../lib/mailtext'
 
-const TURNSTILE_KEY = import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined
+// Öffentlicher Turnstile-Site-Key (darf im Quelltext stehen); der Secret Key liegt nur im Worker.
+const TURNSTILE_KEY = (import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined) || '0x4AAAAAAFNuZfcdyKg_flC1'
 
 const ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT || '/api/anfrage'
 const ANLAESSE = [...SERVICES.flatMap((s) => (s.name === 'Konzerte & Events' ? ['Konzerte', 'Events'] : [s.name])), 'Sonstiges']
