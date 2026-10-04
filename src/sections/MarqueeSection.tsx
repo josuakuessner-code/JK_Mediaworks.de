@@ -4,7 +4,7 @@ import { MARQUEE_IMAGES } from '../data/assets'
 
 const ROW1 = MARQUEE_IMAGES.slice(0, 6)
 const ROW2 = MARQUEE_IMAGES.slice(6)
-const TILE = 420
+const TILE = 260
 const GAP = 12
 
 function Row({ images, rowRef }: { images: string[]; rowRef: React.RefObject<HTMLDivElement> }) {
@@ -20,7 +20,7 @@ function Row({ images, rowRef }: { images: string[]; rowRef: React.RefObject<HTM
           alt=""
           loading="lazy"
           draggable={false}
-          className="h-[270px] w-[420px] shrink-0 rounded-2xl bg-[#161616] object-cover"
+          className="h-[325px] w-[260px] shrink-0 rounded-2xl bg-[#161616] object-cover"
         />
       ))}
     </div>
