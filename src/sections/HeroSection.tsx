@@ -7,14 +7,15 @@ import { SITE } from '../data/content'
 
 export default function HeroSection() {
   return (
-    <section className="relative flex h-svh min-h-[560px] flex-col" style={{ overflowX: 'clip' }}>
+    <section className="hero-section relative flex h-svh min-h-[560px] flex-col" style={{ overflowX: 'clip' }}>
       <FadeIn y={-20} delay={0}>
         <Navbar />
       </FadeIn>
 
-      <FadeIn y={40} delay={0.15}>
-        <div className="w-full overflow-hidden">
-          <h1 className="hero-heading mt-6 w-full whitespace-nowrap text-center text-[8.5vw] font-black uppercase leading-none tracking-tight sm:mt-4 sm:text-[9.5vw] md:-mt-3 md:text-[10.5vw] lg:text-[11vw]">
+      {/* Überschrift mittig zwischen Navigation und Foto: Platz = Bereich oberhalb des Fotos (--ph = Fotohöhe) */}
+      <FadeIn y={40} delay={0.15} className="flex min-h-0 flex-1 flex-col">
+        <div className="hero-zone flex min-h-0 w-full flex-1 items-center overflow-hidden">
+          <h1 className="hero-heading w-full whitespace-nowrap text-center text-[8.5vw] font-black uppercase leading-none tracking-tight sm:text-[9.5vw] md:text-[10.5vw] lg:text-[11vw]">
             Hi, ich bin {SITE.name}
           </h1>
         </div>
@@ -26,7 +27,7 @@ export default function HeroSection() {
             <img
               src={HERO_PORTRAIT}
               alt="Porträt von Josua Küßner"
-              className="block max-h-[62svh] w-[280px] rounded-[32px] object-cover object-[50%_28%] sm:w-[360px] md:w-[440px] md:rounded-[44px] lg:w-[520px]"
+              className="hero-photo block w-[280px] rounded-[32px] object-cover object-[50%_28%] sm:w-[360px] md:w-[440px] md:rounded-[44px] lg:w-[520px]"
               fetchPriority="high" width={900} height={1350}
               draggable={false}
             />
@@ -34,7 +35,7 @@ export default function HeroSection() {
         </FadeIn>
       </div>
 
-      <div className="relative z-20 mt-auto flex items-end justify-between px-6 pb-7 sm:pb-8 md:px-10 md:pb-10">
+      <div className="absolute inset-x-0 bottom-0 z-20 flex items-end justify-between px-6 pb-7 sm:pb-8 md:px-10 md:pb-10">
         <FadeIn y={20} delay={0.35}>
           <p
             className="max-w-[160px] font-light uppercase leading-snug tracking-wide text-[#D7E2EA] sm:max-w-[220px] md:max-w-[260px]"

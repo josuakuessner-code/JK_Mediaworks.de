@@ -52,3 +52,12 @@ a {
     scroll-behavior: auto;
   }
 }
+
+/* Hero: Fotohöhe = min(62svh, 1,5 x Breite); die Überschrift sitzt mittig zwischen Navigation und Foto */
+.hero-section { --pw: 280px; --ph: min(62svh, calc(var(--pw) * 1.5)); }
+@media (min-width: 640px) { .hero-section { --pw: 360px; } }
+@media (min-width: 768px) { .hero-section { --pw: 440px; } }
+@media (min-width: 1024px) { .hero-section { --pw: 520px; } }
+.hero-photo { height: var(--ph); }
+.hero-zone { padding-bottom: calc(50svh + var(--ph) / 2); }
+@media (min-width: 640px) { .hero-zone { padding-bottom: var(--ph); } }
