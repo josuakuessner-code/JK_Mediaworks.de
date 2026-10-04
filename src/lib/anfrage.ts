@@ -8,6 +8,7 @@ export type Anfrage = {
   firma: string
   adresse: string
   anlass: string
+  titel: string
   datum: string
   zeit: string
   ort: string
@@ -80,6 +81,7 @@ export function buildAnfragePdf(a: Anfrage) {
   y += 4
   section('Anlass')
   row('Art', a.anlass)
+  row('Titel / Beschreibung', a.titel)
   row('Datum', de(a.datum))
   row('Uhrzeit / Dauer', a.zeit)
   row('Ort', a.ort)

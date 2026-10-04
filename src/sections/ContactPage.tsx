@@ -86,7 +86,7 @@ export default function ContactPage() {
     const f = new FormData(e.currentTarget)
     const v = (k: string) => String(f.get(k) ?? '').trim()
     const data: Anfrage = {
-      name: v('name'), email: v('email'), phone: v('phone'), firma: v('firma'), adresse: v('adresse'), anlass,
+      name: v('name'), email: v('email'), phone: v('phone'), titel: v('titel'), firma: v('firma'), adresse: v('adresse'), anlass,
       datum: v('datum'), zeit: v('zeit'), ort: v('ort'), personen: v('personen'),
       express, formate, formatEigen: v('formatEigen'), budget: v('budget'), nachricht: v('nachricht'),
     }
@@ -192,6 +192,10 @@ export default function ContactPage() {
                       <Chip key={a} type="radio" active={anlass === a} onClick={() => { setAnlass(a); setAnlassMissing(false) }}>{a}</Chip>
                     ))}
                   </div>
+                  <label className="mt-6 block">
+                    <span className={labelCls}>Titel oder kurze Beschreibung (optional)</span>
+                    <input name="titel" maxLength={160} className={field} placeholder="z. B. Sommerfest TSV Musterstadt oder Abiball 2027" />
+                  </label>
                   {anlassMissing && <p role="alert" className="mt-4 text-sm text-[#BE4C00]">Bitte wähle einen Anlass aus.</p>}
                 </fieldset>
               </FadeIn>
