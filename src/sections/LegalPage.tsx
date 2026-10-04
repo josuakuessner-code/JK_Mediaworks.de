@@ -13,7 +13,7 @@ function Impressum() {
       <h1 className="hero-heading mb-8 font-black uppercase leading-none" style={{ fontSize: 'clamp(2.5rem, 8vw, 90px)' }}>Impressum</h1>
       <p className="mb-6 text-sm text-[#D7E2EA]/60">Angaben gemäß § 5 DDG. Violett markierte Stellen sind Platzhalter und müssen vor Veröffentlichung ausgefüllt werden.</p>
       <h2>Anbieter</h2>
-      <p>Josua Küßner{' '}<Ph>ggf. Firmenzusatz, z. B. „JK-Mediaworks“, erst nach Gewerbeanmeldung</Ph><br /><Ph>Straße und Hausnummer (ladungsfähige Anschrift, kein Postfach)</Ph><br /><Ph>PLZ</Ph> Wiesbaden</p>
+      <p>Josua Küßner{' '}<Ph>ggf. Firmenzusatz, z. B. „JK-Mediaworks“, erst nach Gewerbeanmeldung</Ph><br />Freesienweg 27<br />65201 Wiesbaden</p>
       <h2>Kontakt</h2>
       <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a><br />Telefon: <Ph>Telefonnummer als zweiter schneller Kontaktweg</Ph></p>
       <h2>Umsatzsteuer</h2>
@@ -28,15 +28,15 @@ function Datenschutz() {
       <h1 className="hero-heading mb-8 font-black uppercase leading-none" style={{ fontSize: 'clamp(2.5rem, 8vw, 90px)' }}>Datenschutz</h1>
       <p className="mb-6 text-sm text-[#D7E2EA]/60">Entwurf zur Orientierung, keine Rechtsberatung. Bitte vor Livegang mit einem Generator (z. B. eRecht24, Datenschutz-Generator.de) abgleichen. Die Erklärung muss exakt zur eingesetzten Technik passen.</p>
       <h2>Verantwortlicher</h2>
-      <p>Josua Küßner, <Ph>Anschrift wie im Impressum</Ph>, E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a></p>
+      <p>Josua Küßner, Freesienweg 27, 65201 Wiesbaden, E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a></p>
       <h2>Hosting und Server-Logfiles</h2>
-      <p>Beim Aufruf der Seite verarbeitet der Hoster technisch notwendig deine IP-Adresse, Datum/Uhrzeit, aufgerufene Datei und Browserangaben (Art. 6 Abs. 1 lit. f DSGVO, Interesse am sicheren Betrieb). Hoster: <Ph>Name und Sitz des Hosters</Ph>. Speicherdauer: <Ph>laut Hoster, z. B. 7 Tage</Ph>. Ein Auftragsverarbeitungsvertrag (Art. 28 DSGVO) mit dem Hoster ist <Ph>abzuschließen</Ph>.</p>
+      <p>Beim Aufruf der Seite verarbeitet der Hoster technisch notwendig deine IP-Adresse, Datum/Uhrzeit, aufgerufene Datei und Browserangaben (Art. 6 Abs. 1 lit. f DSGVO, Interesse am sicheren Betrieb). Hoster: Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA. Die Speicherdauer der Server-Logs richtet sich nach den Angaben des Hosters. Mit dem Hoster besteht ein Auftragsverarbeitungsvertrag (Art. 28 DSGVO, Cloudflare Data Processing Addendum); eine Datenübermittlung in die USA stützt sich auf die EU-Standardvertragsklauseln bzw. das EU-US Data Privacy Framework.</p>
       <h2>Schriftarten</h2>
       <p>Die Schrift „Kanit“ wird lokal von diesem Server ausgeliefert. Es wird keine Verbindung zu Google oder anderen Schriftanbietern aufgebaut.</p>
       <h2>Kontaktaufnahme per E-Mail</h2>
       <p>Wenn du mir schreibst, verarbeite ich deine Angaben zur Bearbeitung der Anfrage (Art. 6 Abs. 1 lit. b bzw. f DSGVO). Die Daten werden gelöscht, sobald die Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
       <h2>Anfrageformular</h2>
-      <p>Wenn du das Formular nutzt, werden deine Angaben (Name, E-Mail, ggf. Telefon, Anlass, Termin, Ort, Wünsche, Nachricht) im Browser zu einem PDF zusammengefügt und an mich übermittelt, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO). Der Versand erfolgt über den Dienst <Ph>E-Mail-Dienst, z. B. Resend, mit Sitz und Auftragsverarbeitungsvertrag</Ph> und die Serverfunktion bei <Ph>Hoster, z. B. Cloudflare</Ph>. Die Daten werden gelöscht, sobald die Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen. Die Angabe von Telefon, Datum, Budget und Nachricht ist freiwillig.</p>
+      <p>Wenn du das Formular nutzt, werden deine Angaben (Name, E-Mail, ggf. Telefon, Firma, Adresse, Anlass, Termin, Ort, Wünsche, Nachricht) im Browser zu einem PDF zusammengefügt und an mich übermittelt, um deine Anfrage zu beantworten (Art. 6 Abs. 1 lit. b DSGVO). Der Versand erfolgt über den Dienst Resend (Resend, Inc., San Francisco, USA, mit Auftragsverarbeitungsvertrag) und die Serverfunktion bei Cloudflare (siehe Hosting). Die Daten werden gelöscht, sobald die Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten bestehen. Die Angabe von Telefon, Datum, Budget und Nachricht ist freiwillig.</p>
       <h2>Cookies, Tracking</h2>
       <p>Diese Seite setzt keine Cookies und verwendet keine Analyse- oder Marketing-Dienste.</p>
       <h2>Deine Rechte</h2>
