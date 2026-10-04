@@ -18,11 +18,13 @@ Alle Fotos liegen lokal in `src/assets/` (keine Fremd-Hotlinks). Die Hochzeits-K
 
 ## Anfrageformular (Seite `#/kontakt`)
 
-Der Button „Kontakt aufnehmen" öffnet eine Anfrage-Seite. Beim Absenden wird im Browser ein PDF erzeugt und an `/api/anfrage` geschickt (`functions/api/anfrage.ts`, Cloudflare Pages Function), die es per [Resend](https://resend.com) als Mail-Anhang an dich sendet. Klappt der Versand nicht, bekommt die Person das PDF zum Download und die Anleitung, es per Mail zu schicken.
+Der Button „Kontakt aufnehmen" öffnet eine Anfrage-Seite. Beim Absenden wird im Browser ein PDF erzeugt und an `/api/anfrage` geschickt. Das übernimmt ein Cloudflare Worker (`worker/index.ts`, Konfiguration in `wrangler.jsonc`), der die Website ausliefert und das PDF per [Resend](https://resend.com) als Mail-Anhang an dich sendet. Klappt der Versand nicht, bekommt die Person das PDF zum Download und die Anweisung, es per Mail zu schicken.
 
-Einrichtung bei Cloudflare Pages (einmalig):
-1. Bei Resend ein kostenloses Konto anlegen und einen API-Key erstellen.
-2. In Cloudflare unter Pages → dein Projekt → Settings → Variables and Secrets: `RESEND_API_KEY` (Secret) und `MAIL_TO` (deine Adresse) anlegen. Optional `MAIL_FROM`, sobald du bei Resend eine eigene Domain verifiziert hast. Ohne Domain verschickt Resend nur an die Adresse deines eigenen Resend-Kontos, also am besten mit derselben Adresse registrieren.
-3. Neu deployen. Danach eine Test-Anfrage senden.
+Einrichtung bei Cloudflare (Workers & Pages, „Create", „Connect to Git"):
+- Build command: `npm run build`
+- Deploy command: `npx wrangler deploy`
+- Path: `/`
+- Danach unter dem Projekt: Settings, „Variables and secrets": `RESEND_API_KEY` (Secret) und `MAIL_TO` (deine Adresse). Optional `MAIL_FROM`, sobald bei Resend eine eigene Domain verifiziert ist. Ohne Domain verschickt Resend nur an die Adresse des eigenen Resend-Kontos, also mit derselben Adresse registrieren.
+- Neu deployen, dann eine Test-Anfrage senden.
 
-Im Datenschutz-Abschnitt „Anfrageformular" (`LegalPage.tsx`) die violetten Platzhalter (E-Mail-Dienst, Hoster) ausfüllen und mit Resend und Cloudflare je einen Auftragsverarbeitungsvertrag abschließen.
+Im Datenschutz-Abschnitt „Anfrageformular" (`LegalPage.tsx`) die violetten Platzhalter ausfüllen und mit Resend und Cloudflare je einen Auftragsverarbeitungsvertrag abschließen.
