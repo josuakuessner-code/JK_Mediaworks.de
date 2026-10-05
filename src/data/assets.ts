@@ -37,6 +37,19 @@ import bts4 from '../assets/bts4.webp'
 import bts5 from '../assets/bts5.webp'
 import about1 from '../assets/about1.webp'
 import about2 from '../assets/about2.webp'
+import mj1 from '../assets/mj1.webp'
+import mj2 from '../assets/mj2.webp'
+import mj3 from '../assets/mj3.webp'
+import mj4 from '../assets/mj4.webp'
+import mo1 from '../assets/mo1.webp'
+import mo2 from '../assets/mo2.webp'
+import mo3 from '../assets/mo3.webp'
+import mo4 from '../assets/mo4.webp'
+import mo5 from '../assets/mo5.webp'
+import mo6 from '../assets/mo6.webp'
+import mo7 from '../assets/mo7.webp'
+import mo8 from '../assets/mo8.webp'
+import mo9 from '../assets/mo9.webp'
 import about3 from '../assets/about3.webp'
 import about4 from '../assets/about4.webp'
 
@@ -51,9 +64,16 @@ const RAW_PROJECT_IMAGES: Record<string, string[]> = {
   'dvv-pokalfinale': [p4a, p4b, p4c],
   'hochzeit-schweden': [wed1, wed2, wed3, wed4],
   'media-day-eintracht': [md1, md2, md3, md4, md5, md6],
+  'media-day-jugend': [mj1, mj2, mj3, mj4],
+  'fk-performance-24h': [mo1, mo2, mo3, mo4, mo5, mo6, mo7, mo8, mo9],
 }
+const LANDSCAPE: string[] = [mo4]
 // Gemischte Reihenfolge: die ersten 4 stehen auf der Startseite, die Galerie zeigt alle.
 export const PROJECT_IMAGES: Record<string, string[]> = Object.fromEntries(
-  Object.entries(RAW_PROJECT_IMAGES).map(([id, imgs]) => [id, mixed(id, imgs)]),
+  Object.entries(RAW_PROJECT_IMAGES).map(([id, imgs]) => {
+    const m = mixed(id, imgs)
+    // Querformate nach hinten, damit die ersten 4 (Startseite) Hochformat bleiben
+    return [id, [...m.filter((i) => !LANDSCAPE.includes(i)), ...m.filter((i) => LANDSCAPE.includes(i))]]
+  }),
 )
 export const BTS_IMAGES: string[] = [bts1, bts2, bts3, bts4, bts5]

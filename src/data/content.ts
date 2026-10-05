@@ -17,13 +17,15 @@ export const SERVICES = [
 ]
 
 // Struktur wie im Foto-Ordner: Kategorie > Job. Neue Jobs hier eintragen und Bilder in assets.ts zuordnen.
-export const CATEGORIES = ['Sport', 'Hochzeiten', 'Media Days'] as const
+export const CATEGORIES = ['Sport', 'Motorsport', 'Hochzeiten', 'Media Days'] as const
 export type Category = (typeof CATEGORIES)[number]
 
 export const PROJECTS: { id: string; group: Category; category: string; name: string }[] = [
   { id: 'barock-volleys', group: 'Sport', category: 'Volleyball · Bundesliga', name: 'Barock Volleys MTV Ludwigsburg' },
   { id: 'u18-4-nations-cup', group: 'Sport', category: 'Volleyball · U18-Nationalmannschaft', name: 'Jugendnationalmannschaft · 4 Nations Cup Brandenburg' },
   { id: 'dvv-pokalfinale', group: 'Sport', category: 'Volleyball · Pokalfinale', name: 'DVV ZOI Pokalfinale 2026' },
+  { id: 'fk-performance-24h', group: 'Motorsport', category: 'Motorsport · Langstrecke', name: 'FK Performance · 24h Rennen Nürburgring' },
   { id: 'hochzeit-schweden', group: 'Hochzeiten', category: 'Hochzeit · Schweden', name: 'Robin & Judith in Schweden' },
   { id: 'media-day-eintracht', group: 'Media Days', category: 'Media Day · Volleyball', name: 'Eintracht Wiesbaden' },
+  { id: 'media-day-jugend', group: 'Media Days', category: 'Media Day · Volleyball', name: 'Jugendnationalmannschaft' },
 ]
