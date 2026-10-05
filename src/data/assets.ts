@@ -57,6 +57,13 @@ import about4 from '../assets/about4.webp'
 export const HERO_PORTRAIT = portrait
 export const MARQUEE_IMAGES: string[] = [mq01, mq02, mq03, mq04, mq05, mq06, mq07, mq08, mq09, mq10, mq11]
 export const ABOUT_IMAGES = { moon: about1, object: about2, lego: about3, group: about4 }
+// Karten mit handverlesener Reihenfolge (01.webp = Titelbild): src/assets/cards/<id>/NN.webp, wird nicht gemischt
+const CARD_FILES = import.meta.glob('../assets/cards/*/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>
+const CURATED: Record<string, string[]> = {}
+for (const path of Object.keys(CARD_FILES).sort()) {
+  const id = path.split('/')[3]
+  ;(CURATED[id] ||= []).push(CARD_FILES[path])
+}
 // Schlüssel = id des Projekts in content.ts (Ordnerstruktur: Kategorie > Job)
 const RAW_PROJECT_IMAGES: Record<string, string[]> = {
   'barock-volleys': [p1a, p1b, p1c],
@@ -69,11 +76,11 @@ const RAW_PROJECT_IMAGES: Record<string, string[]> = {
 }
 const LANDSCAPE: string[] = [mo4]
 // Gemischte Reihenfolge: die ersten 4 stehen auf der Startseite, die Galerie zeigt alle.
-export const PROJECT_IMAGES: Record<string, string[]> = Object.fromEntries(
+export const PROJECT_IMAGES: Record<string, string[]> = { ...CURATED, ...Object.fromEntries(
   Object.entries(RAW_PROJECT_IMAGES).map(([id, imgs]) => {
     const m = mixed(id, imgs)
     // Querformate nach hinten, damit die ersten 4 (Startseite) Hochformat bleiben
     return [id, [...m.filter((i) => !LANDSCAPE.includes(i)), ...m.filter((i) => LANDSCAPE.includes(i))]]
   }),
-)
+) }
 export const BTS_IMAGES: string[] = [bts1, bts2, bts3, bts4, bts5]
