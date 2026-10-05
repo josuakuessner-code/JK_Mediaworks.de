@@ -25,25 +25,43 @@ async function verifyTurnstile(secret: string, token: string, ip: string | null)
 }
 
 // Bestätigung an den Absender der Anfrage; nur mit eigener, bei Resend verifizierter Absenderadresse (MAIL_FROM).
-async function sendConfirmation(env: Env, to: string, name: string, anlass: string) {
+// Mit ausgefülltem Firmenfeld (Geschäftskunde) wird gesiezt, sonst geduzt.
+async function sendConfirmation(env: Env, to: string, name: string, anlass: string, firma: string) {
   if (!env.MAIL_FROM) return
-  const text = [
-    `Hallo ${name},`,
-    '',
-    `vielen Dank für deine Anfrage (${anlass}). Sie ist bei mir angekommen und ich melde mich so schnell wie möglich bei dir, in der Regel innerhalb von 1 bis 2 Tagen.`,
-    '',
-    'Preise gestalte ich individuell nach Zeit und Aufwand, du bekommst von mir ein passendes Angebot. Die Bilder liefere ich nach Absprache, zum Beispiel schon während des Events, am selben Abend oder zum gewünschten Zeitpunkt.',
-    '',
-    'Viele Grüße',
-    'Josua Küßner',
-    'JK-Mediaworks · Wiesbaden',
-    'https://jkmediaworks.com',
-  ].join('\n')
+  const sie = firma.trim() !== ''
+  const subject = sie ? 'Ihre Anfrage bei JK-Mediaworks' : 'Deine Anfrage bei JK-Mediaworks'
+  const text = (sie
+    ? [
+        `Guten Tag ${name},`,
+        '',
+        `vielen Dank für Ihre Anfrage (${anlass}). Sie ist bei mir eingegangen, und ich melde mich so schnell wie möglich bei Ihnen, in der Regel innerhalb von 1 bis 2 Werktagen.`,
+        '',
+        'Die Preise gestalte ich individuell nach Zeit und Aufwand, Sie erhalten von mir ein passendes Angebot. Die Bilder liefere ich nach Absprache, zum Beispiel bereits während der Veranstaltung, am selben Abend oder zum gewünschten Zeitpunkt.',
+        '',
+        'Mit freundlichen Grüßen',
+        '',
+        'Josua Küßner',
+        'JK-Mediaworks · Wiesbaden',
+        'https://jkmediaworks.com',
+      ]
+    : [
+        `Hallo ${name},`,
+        '',
+        `vielen Dank für deine Anfrage (${anlass}). Sie ist bei mir angekommen und ich melde mich so schnell wie möglich bei dir, in der Regel innerhalb von 1 bis 2 Tagen.`,
+        '',
+        'Preise gestalte ich individuell nach Zeit und Aufwand, du bekommst von mir ein passendes Angebot. Die Bilder liefere ich nach Absprache, zum Beispiel schon während des Events, am selben Abend oder zum gewünschten Zeitpunkt.',
+        '',
+        'Viele Grüße',
+        'Josua Küßner',
+        'JK-Mediaworks · Wiesbaden',
+        'https://jkmediaworks.com',
+      ]
+  ).join('\n')
   await fetch('https://api.resend.com/emails', {
     signal: AbortSignal.timeout(10000),
     method: 'POST',
     headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ from: env.MAIL_FROM, to: [to], reply_to: env.MAIL_TO, subject: 'Deine Anfrage bei JK-Mediaworks', text }),
+    body: JSON.stringify({ from: env.MAIL_FROM, to: [to], reply_to: env.MAIL_TO, subject, text }),
   }).catch(() => undefined)
 }
 
@@ -100,7 +118,7 @@ async function handleAnfrage(request: Request, env: Env) {
     }),
   })
   if (res.ok) {
-    await sendConfirmation(env, email, name, clean(d.anlass, 60))
+    await sendConfirmation(env, email, name, clean(d.anlass, 60), clean(d.firma))
     return json({ ok: true })
   }
   const detail = await res.text().then((t) => clean(t, 300)).catch(() => '')
