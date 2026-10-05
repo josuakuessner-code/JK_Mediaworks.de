@@ -3,14 +3,8 @@ import { motion, useReducedMotion, useScroll, useTransform, type MotionValue } f
 
 function Char({ char, range, progress, still }: { char: string; range: [number, number]; progress: MotionValue<number>; still: boolean }) {
   const opacity = useTransform(progress, range, [0.2, 1])
-  return (
-    <span className="relative inline-block" aria-hidden="true">
-      <span className="opacity-0">{char}</span>
-      <motion.span className="absolute left-0 top-0" style={{ opacity: still ? 1 : opacity }}>
-        {char}
-      </motion.span>
-    </span>
-  )
+  // Buchstabe steckt nur im data-Attribut und wird per CSS gezeichnet, damit er nicht doppelt im Text steht
+  return <motion.span data-c={char} className="inline-block after:content-[attr(data-c)]" style={{ opacity: still ? 1 : opacity }} />
 }
 
 export default function AnimatedText({ text, className = '', style }: { text: string; className?: string; style?: React.CSSProperties }) {
@@ -22,7 +16,9 @@ export default function AnimatedText({ text, className = '', style }: { text: st
   const words = text.split(' ')
 
   return (
-    <p ref={ref} className={className} style={style} aria-label={text}>
+    <p ref={ref} className={className} style={style}>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
       {words.map((word, w) => (
         <span key={w} className="inline-block whitespace-nowrap">
           {word.split('').map((c) => {
@@ -32,6 +28,7 @@ export default function AnimatedText({ text, className = '', style }: { text: st
           {w < words.length - 1 && <span aria-hidden="true">{(i++, ' ')}</span>}
         </span>
       ))}
+      </span>
     </p>
   )
 }
