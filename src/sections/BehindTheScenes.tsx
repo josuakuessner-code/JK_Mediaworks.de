@@ -3,14 +3,7 @@ import FadeIn from '../components/FadeIn'
 import Lightbox from '../components/Lightbox'
 import { BTS_IMAGES } from '../data/assets'
 
-const ALTS = [
-  'Behind the Scenes: Studio-Aufbau in der Umkleidekabine mit weißem Hintergrund und Softboxen, Spieler im Trikot posiert',
-  'Behind the Scenes: Portraitshooting in der Umkleide, Spieler hält zwei Bälle über den Schultern',
-  'Behind the Scenes: Am Spielfeldrand sitzt ein Betreuer im Volleyball-Germany-Shirt mit Laptop, im Hintergrund die Halle',
-  'Behind the Scenes: Betreuer im Volleyball-Germany-Shirt sitzt auf dem Hallenboden und schaut aufs Spiel',
-  'Behind the Scenes: Mannschaft jubelt in der Halle, ein Kameramann filmt die Szene',
-]
-const items = BTS_IMAGES.map((src, i) => ({ src, alt: ALTS[i] ?? 'Behind the Scenes' }))
+const items = BTS_IMAGES.map((src, i) => ({ src, alt: `Behind the Scenes bei einem Shooting von JK-Mediaworks, Bild ${i + 1}` }))
 
 export default function BehindTheScenes() {
   const [open, setOpen] = useState<number | null>(null)
@@ -25,7 +18,7 @@ export default function BehindTheScenes() {
             So sieht es hinter der Kamera aus: Licht, Aufbau und viel Hallenluft.
           </p>
         </FadeIn>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
           {items.map((it, i) => (
             <FadeIn key={it.src} y={30} delay={0.05 * i} className={i % 2 === 1 ? 'lg:mt-10' : ''}>
               <button type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${it.alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-2xl md:rounded-3xl">

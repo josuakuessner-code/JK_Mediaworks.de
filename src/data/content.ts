@@ -22,6 +22,7 @@ export type Category = (typeof CATEGORIES)[number]
 
 export const PROJECTS: { id: string; group: Category; category: string; name: string }[] = [
   { id: 'barock-volleys', group: 'Sport', category: 'Volleyball · Bundesliga', name: 'Barock Volleys MTV Ludwigsburg' },
+  { id: 'volley-juniors-frankfurt', group: 'Sport', category: 'Volleyball · Nachwuchs', name: 'Volley Juniors Frankfurt' },
   { id: 'vc-wiesbaden', group: 'Sport', category: 'Volleyball', name: 'VC Wiesbaden' },
   { id: 'u18-em-quali', group: 'Sport', category: 'Volleyball · U18-Nationalmannschaft', name: 'Jugendnationalmannschaft · U18 EM Qualifikation' },
   { id: 'u20-wevza', group: 'Sport', category: 'Volleyball · U20-Nationalmannschaft', name: 'Jugendnationalmannschaft · U20 WEVZA Turnier' },
