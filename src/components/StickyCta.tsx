@@ -2,14 +2,25 @@ import { useEffect, useState } from 'react'
 import { goTo } from '../lib/links'
 
 // Immer sichtbar: schwebender Kontakt-Knopf unten rechts, auf Handy und Desktop.
-// Nur wenn der Kontakt-Knopf im Kontaktbereich selbst im Bild ist, blendet er sich aus, damit keine zwei Knöpfe übereinander liegen.
+// Wenn ein Kontakt-Knopf der Seite selbst unten im Bild ankommt, blendet er sich aus, damit keine zwei Knöpfe übereinander liegen.
 export default function StickyCta() {
   const [hidden, setHidden] = useState(false)
   useEffect(() => {
-    const target = document.querySelector('#contact a[href="/kontakt"]')
-    if (!target) return
-    const io = new IntersectionObserver(([e]) => setHidden(e.isIntersecting), { rootMargin: '0px 0px 80px 0px' })
-    io.observe(target)
+    const targets = [...document.querySelectorAll<HTMLElement>('a[href="/kontakt"]')].filter((el) => !el.classList.contains('fixed'))
+    if (!targets.length) return
+    const inZone = new Set<Element>()
+    // Beobachtet nur den unteren Bildschirmrand: dort liegt der schwebende Knopf.
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) inZone.add(e.target)
+          else inZone.delete(e.target)
+        }
+        setHidden(inZone.size > 0)
+      },
+      { rootMargin: '-82% 0px 0px 0px' },
+    )
+    targets.forEach((t) => io.observe(t))
     return () => io.disconnect()
   }, [])
   return (
