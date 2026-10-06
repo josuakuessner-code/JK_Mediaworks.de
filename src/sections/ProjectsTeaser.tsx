@@ -1,17 +1,28 @@
+import { useState } from 'react'
 import FadeIn from '../components/FadeIn'
 import LiveProjectButton from '../components/LiveProjectButton'
 import { goTo } from '../lib/links'
 import { PROJECT_IMAGES } from '../data/assets'
 import { PROJECTS } from '../data/content'
 
-// Ein Foto pro Projekt, bewusst quer durch alle Themen, damit die Startseite kompakt bleibt.
-const PICKS = ['barock-volleys', 'fk-performance-24h', 'hochzeit-schweden', 'u18-em-quali', 'media-day-eintracht']
+// Bei jedem Seitenaufruf 5 zufällige Projekte mit je einem zufälligen Foto. Mindestens ein Nicht-Sport-Projekt, damit die Mischung abwechslungsreich bleibt.
+const shuffle = <T,>(a: T[]) => [...a].sort(() => Math.random() - 0.5)
+function pick() {
+  const pool = shuffle(PROJECTS.filter((p) => (PROJECT_IMAGES[p.id]?.length ?? 0) > 0))
+  const chosen = pool.slice(0, 5)
+  if (!chosen.some((p) => p.group !== 'Sport')) {
+    const other = pool.slice(5).find((p) => p.group !== 'Sport')
+    if (other) chosen[4] = other
+  }
+  return shuffle(chosen).map((project) => {
+    const imgs = PROJECT_IMAGES[project.id]
+    return { project, src: imgs[Math.floor(Math.random() * imgs.length)] }
+  })
+}
 const OFFSET = ['lg:mt-0', 'lg:mt-14', 'lg:mt-4', 'lg:mt-20', 'lg:mt-8']
 
 export default function ProjectsTeaser() {
-  const items = PICKS.map((id) => ({ project: PROJECTS.find((p) => p.id === id), src: PROJECT_IMAGES[id]?.[0] })).filter(
-    (x): x is { project: (typeof PROJECTS)[number]; src: string } => Boolean(x.project && x.src),
-  )
+  const [items] = useState(pick)
   return (
     <section id="projects" className="relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 py-20 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:-mt-14 md:rounded-t-[60px] md:px-10 md:py-32">
       <FadeIn y={40}>
