@@ -3,6 +3,7 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import Lightbox from '../components/Lightbox'
 import FadeIn from '../components/FadeIn'
 import LiveProjectButton from '../components/LiveProjectButton'
+import { goTo } from '../lib/links'
 import { PROJECT_IMAGES } from '../data/assets'
 import { CATEGORIES, PROJECTS, type Category } from '../data/content'
 
@@ -60,11 +61,12 @@ export default function ProjectsSection() {
   const chip = (active: boolean) =>
     `press rounded-full border-2 px-5 py-2 text-xs font-medium uppercase tracking-widest transition-colors sm:px-7 sm:py-2.5 sm:text-sm ${active ? 'border-[#D7E2EA] bg-[#D7E2EA] text-[#0C0C0C]' : 'border-[#D7E2EA]/60 text-[#D7E2EA] hover:bg-[#D7E2EA]/10'}`
   return (
-    <section id="projects" className="relative z-10 -mt-10 rounded-t-[40px] bg-[#0C0C0C] px-5 py-20 sm:-mt-12 sm:rounded-t-[50px] sm:px-8 sm:py-24 md:-mt-14 md:rounded-t-[60px] md:px-10 md:py-32">
+    <main className="relative z-10 min-h-screen bg-[#0C0C0C] px-5 pb-20 pt-8 sm:px-8 sm:pb-24 md:px-10 md:pb-32 md:pt-12">
+      <a href="/" onClick={goTo} className="press mb-10 inline-block text-sm font-medium uppercase tracking-wider text-[#D7E2EA] transition-opacity duration-200 hover:opacity-70">← Startseite</a>
       <FadeIn y={40}>
-        <h2 className="hero-heading mb-10 text-center font-black uppercase leading-none tracking-tight sm:mb-12" style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}>
+        <h1 className="hero-heading mb-10 text-center font-black uppercase leading-none tracking-tight sm:mb-12" style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}>
           Projekte
-        </h2>
+        </h1>
       </FadeIn>
       <div role="group" aria-label="Projekte filtern" className="mb-12 flex flex-wrap justify-center gap-3 sm:mb-16 md:mb-20">
         {(['Alle', ...CATEGORIES] as const).map((c) => (
@@ -78,6 +80,6 @@ export default function ProjectsSection() {
           <Card key={p.id} p={p} index={i} total={list.length} />
         ))}
       </div>
-    </section>
+    </main>
   )
 }

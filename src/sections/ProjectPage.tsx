@@ -15,7 +15,7 @@ export default function ProjectPage({ id }: { id: string }) {
     return (
       <main className="mx-auto flex min-h-screen max-w-3xl flex-col items-start gap-6 px-5 py-16 text-[#D7E2EA]">
         <h1 className="hero-heading text-5xl font-black uppercase">Projekt nicht gefunden</h1>
-        <a href="/#projects" onClick={goTo} className="underline underline-offset-4">← Alle Projekte</a>
+        <a href="/projekte" onClick={goTo} className="underline underline-offset-4">← Alle Projekte</a>
       </main>
     )
   }
@@ -23,7 +23,7 @@ export default function ProjectPage({ id }: { id: string }) {
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-5 py-10 text-[#D7E2EA] sm:px-8 md:py-16">
-      <a href="/#projects" onClick={goTo} className="press mb-10 inline-block text-sm font-medium uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">← Alle Projekte</a>
+      <a href="/projekte" onClick={goTo} className="press mb-10 inline-block text-sm font-medium uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">← Alle Projekte</a>
       <FadeIn y={30}>
         <p className="font-light uppercase tracking-widest text-[#D7E2EA]/70" style={{ fontSize: 'clamp(0.75rem, 1.2vw, 1rem)' }}>{p.category}</p>
         <h1 className="hero-heading mb-10 mt-2 font-black uppercase leading-none tracking-tight sm:mb-14" style={{ fontSize: 'clamp(2rem, 7vw, 96px)' }}>{p.name}</h1>
@@ -38,7 +38,7 @@ export default function ProjectPage({ id }: { id: string }) {
       <div className="mt-16 flex flex-col items-center gap-6 border-t border-[#D7E2EA]/15 pt-14 text-center">
         <p className="max-w-[460px] font-medium leading-relaxed" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>Gefällt dir, was du siehst? Erzähl mir von deinem Event.</p>
         <ContactButton />
-        <a href="/#projects" onClick={goTo} className="text-sm font-light uppercase tracking-wider opacity-70 transition-opacity hover:opacity-100">← Alle Projekte</a>
+        <a href="/projekte" onClick={goTo} className="text-sm font-light uppercase tracking-wider opacity-70 transition-opacity hover:opacity-100">← Alle Projekte</a>
       </div>
       {open !== null && <Lightbox images={items} index={open} onIndex={setOpen} onClose={() => setOpen(null)} />}
     </main>

@@ -6,6 +6,7 @@ import AboutSection from './sections/AboutSection'
 import BehindTheScenes from './sections/BehindTheScenes'
 import ServicesSection from './sections/ServicesSection'
 import ProjectsSection from './sections/ProjectsSection'
+import ProjectsTeaser from './sections/ProjectsTeaser'
 import ContactSection from './sections/ContactSection'
 import LegalPage from './sections/LegalPage'
 import ContactPage from './sections/ContactPage'
@@ -14,7 +15,7 @@ import NotFoundPage from './sections/NotFoundPage'
 import StickyCta from './components/StickyCta'
 import { PROJECTS } from './data/content'
 
-const PAGES = ['kontakt', 'impressum', 'datenschutz'] as const
+const PAGES = ['projekte', 'kontakt', 'impressum', 'datenschutz'] as const
 type Page = 'home' | 'projekt' | 'notfound' | (typeof PAGES)[number]
 
 const segments = () => window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase().split('/')
@@ -29,6 +30,7 @@ const projectId = () => segments()[1] ?? ''
 const TITLES: Record<Page, string> = {
   home: 'JK-Mediaworks | Fotograf Wiesbaden: Sport, Konzerte, Hochzeiten',
   projekt: 'Projekt | JK-Mediaworks',
+  projekte: 'Projekte | JK-Mediaworks: Fotograf Wiesbaden',
   notfound: 'Seite nicht gefunden | JK-Mediaworks',
   kontakt: 'Anfrage | JK-Mediaworks',
   impressum: 'Impressum | JK-Mediaworks',
@@ -38,6 +40,7 @@ const TITLES: Record<Page, string> = {
 // Alte Links (#/kontakt) einmalig auf echte Pfade umschreiben.
 const DESCRIPTIONS: Record<Page, string> = {
   home: 'JK-Mediaworks: Fotograf aus Wiesbaden für Sportfotografie, Konzerte, Events und Hochzeiten. Emotionale Bilder mit besonderem Look. Jetzt unverbindlich anfragen.',
+  projekte: 'Alle Projekte von JK-Mediaworks: Volleyball, Motorsport, Hochzeiten und Media Days. Fotograf aus Wiesbaden.',
   projekt: 'Projekt von JK-Mediaworks, Fotograf aus Wiesbaden: alle Fotos in der Galerie.',
   kontakt: 'Unverbindliche Anfrage an JK-Mediaworks: Termin, Ort und Wünsche angeben und ein Angebot für deine Fotos erhalten.',
   impressum: 'Impressum von JK-Mediaworks, Josua Küßner, Wiesbaden.',
@@ -96,19 +99,21 @@ export default function App() {
             <AboutSection />
             <BehindTheScenes />
             <ServicesSection />
-            <ProjectsSection />
+            <ProjectsTeaser />
             <ContactSection />
           </>
         ) : page === 'notfound' ? (
           <NotFoundPage />
         ) : page === 'projekt' ? (
           <ProjectPage key={pid} id={pid} />
+        ) : page === 'projekte' ? (
+          <ProjectsSection />
         ) : page === 'kontakt' ? (
           <ContactPage />
         ) : (
           <LegalPage page={page} />
         )}
-        {(page === 'home' || page === 'projekt') && <StickyCta />}
+        {(page === 'home' || page === 'projekt' || page === 'projekte') && <StickyCta />}
       </div>
     </MotionConfig>
   )
