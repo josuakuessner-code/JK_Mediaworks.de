@@ -84,7 +84,7 @@ export default function ContactPage() {
 
   useEffect(() => {
     const prev = document.title
-    document.title = `Anfrage – ${SITE.brand}`
+    document.title = `Anfrage | ${SITE.brand}`
     return () => {
       document.title = prev
     }

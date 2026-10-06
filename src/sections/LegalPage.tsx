@@ -56,7 +56,7 @@ export default function LegalPage({ page }: { page: 'impressum' | 'datenschutz' 
   useEffect(() => {
     window.scrollTo(0, 0)
     const prev = document.title
-    document.title = `${page === 'impressum' ? 'Impressum' : 'Datenschutz'} – ${SITE.brand}`
+    document.title = `${page === 'impressum' ? 'Impressum' : 'Datenschutz'} | ${SITE.brand}`
     return () => {
       document.title = prev
     }

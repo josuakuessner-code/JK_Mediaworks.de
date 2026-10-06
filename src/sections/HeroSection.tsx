@@ -28,7 +28,7 @@ export default function HeroSection() {
               src={HERO_PORTRAIT}
               alt="Porträt von Josua Küßner"
               className="hero-photo block w-[280px] rounded-[32px] object-cover object-[50%_28%] sm:w-[360px] md:w-[440px] md:rounded-[44px] lg:w-[520px]"
-              fetchPriority="high" width={900} height={1350}
+              {...({ fetchpriority: "high" } as object)} width={900} height={1350}
               draggable={false}
             />
           </Magnet>
