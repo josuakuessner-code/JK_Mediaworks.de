@@ -17,15 +17,16 @@ for (const path of Object.keys(CARD_FILES).sort()) {
 export const PROJECT_IMAGES: Record<string, string[]> = CURATED
 export const BTS_IMAGES: string[] = CURATED['behind-the-scenes'] ?? []
 
-// Laufband: bei jedem Seitenaufruf 12 zufällige Fotos aus den Projekten, höchstens 2 je Projekt
-const MARQUEE_SOURCES = ['barock-volleys', 'dvv-pokalfinale', 'u18-4-nations-cup', 'u18-em-quali', 'u20-wevza', 'vc-wiesbaden', 'volley-juniors-frankfurt', 'fk-performance-24h', 'nls-nuerburgring', 'media-day-eintracht']
-function pickMarquee(count: number, perProject: number): string[] {
+// Laufband: bei jedem Seitenaufruf 24 zufällige Fotos aus den Projekten, höchstens 3 je Projekt (mit Projekt-ID für den Link)
+const MARQUEE_SOURCES = ['barock-volleys', 'dvv-pokalfinale', 'u18-4-nations-cup', 'u18-em-quali', 'u20-wevza', 'vc-wiesbaden', 'volley-juniors-frankfurt', 'fk-performance-24h', 'nls-nuerburgring', 'media-day-eintracht', 'media-day-jugend', 'hochzeit-schweden']
+export type MarqueeImage = { src: string; id: string }
+function pickMarquee(count: number, perProject: number): MarqueeImage[] {
   const rnd = () => Math.random() - 0.5
-  const picked: string[] = []
-  const pools = MARQUEE_SOURCES.map((id) => [...(CURATED[id] ?? [])].sort(rnd).slice(0, perProject)).sort(rnd)
+  const picked: MarqueeImage[] = []
+  const pools = MARQUEE_SOURCES.map((id) => [...(CURATED[id] ?? [])].sort(rnd).slice(0, perProject).map((src) => ({ src, id }))).sort(rnd)
   for (let round = 0; round < perProject && picked.length < count; round++) {
     for (const pool of pools) if (pool[round] && picked.length < count) picked.push(pool[round])
   }
   return picked.sort(rnd)
 }
-export const MARQUEE_IMAGES: string[] = pickMarquee(12, 2)
+export const MARQUEE_IMAGES: MarqueeImage[] = pickMarquee(24, 3)
