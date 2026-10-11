@@ -18,7 +18,7 @@ Alle Fotos liegen lokal in `src/assets/` (keine Fremd-Hotlinks). Die Hochzeits-K
 
 ## Anfrageformular (Seite `#/kontakt`)
 
-Der Button „Kontakt aufnehmen" öffnet eine Anfrage-Seite. Beim Absenden wird im Browser ein PDF erzeugt und an `/api/anfrage` geschickt. Das übernimmt ein Cloudflare Worker (`worker/index.ts`, Konfiguration in `wrangler.jsonc`), der die Website ausliefert und das PDF per [Resend](https://resend.com) als Mail-Anhang an dich sendet. Klappt der Versand nicht, bekommt die Person das PDF zum Download und die Anweisung, es per Mail zu schicken.
+Der Button „Kontakt aufnehmen" öffnet eine Anfrage-Seite. Beim Absenden wird im Browser ein PDF erzeugt und an `/api/anfrage` geschickt. Das übernimmt ein Cloudflare Worker (`worker/index.ts`, Konfiguration in `wrangler.jsonc`), der die Website ausliefert und das PDF per [Resend](https://resend.com) als Mail-Anhang an dich sendet. Klappt der Versand nicht, bekommt die Person das PDF zum Download und die Anweisung, es per Mail zu schicken. Der Worker nimmt nur echte PDFs an (Anhang heißt immer `Anfrage.pdf`) und prüft Turnstile, sobald das Secret `TURNSTILE_SECRET` gesetzt ist.
 
 Einrichtung bei Cloudflare (Workers & Pages, „Create", „Connect to Git"):
 - Build command: `npm run build`
