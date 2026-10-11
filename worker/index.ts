@@ -71,7 +71,9 @@ async function handleAnfrage(request: Request, env: Env) {
   if (Number(request.headers.get('content-length') ?? 0) > 5_000_000) return json({ ok: false, error: 'too-large' }, 413)
   let d: Record<string, unknown>
   try {
-    d = await request.json()
+    const parsed: unknown = await request.json()
+    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return json({ ok: false, error: 'bad-json' }, 400)
+    d = parsed as Record<string, unknown>
   } catch {
     return json({ ok: false, error: 'bad-json' }, 400)
   }
@@ -83,7 +85,8 @@ async function handleAnfrage(request: Request, env: Env) {
   const email = clean(d.email)
   const name = clean(d.name)
   const pdf = String(d.pdfBase64 ?? '')
-  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !pdf || pdf.length > 4_000_000) {
+  // Anhang muss ein PDF sein ("%PDF-" in Base64 = "JVBERi0"), sonst könnte jeder beliebige Dateien in dein Postfach schicken.
+  if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !pdf.startsWith('JVBERi0') || pdf.length > 4_000_000 || !/^[A-Za-z0-9+/=]+$/.test(pdf)) {
     return json({ ok: false, error: 'invalid' }, 400)
   }
   const lines = [
@@ -116,15 +119,14 @@ async function handleAnfrage(request: Request, env: Env) {
       reply_to: email,
       subject: `Neue Anfrage: ${clean(d.anlass, 60)} von ${name}`,
       text: lines.join('\n'),
-      attachments: [{ filename: clean(d.fileName, 80) || 'Anfrage.pdf', content: pdf }],
+      attachments: [{ filename: 'Anfrage.pdf', content: pdf }],
     }),
   })
   if (res.ok) {
-    await sendConfirmation(env, email, name, clean(d.anlass, 60), clean(d.firma))
+    await sendConfirmation(env, email, clean(name, 60), clean(d.anlass, 60), clean(d.firma, 60))
     return json({ ok: true })
   }
-  const detail = await res.text().then((t) => clean(t, 300)).catch(() => '')
-  return json({ ok: false, error: 'mail-failed', detail }, 502)
+  return json({ ok: false, error: 'mail-failed' }, 502)
 }
 
 export default {
