@@ -67,6 +67,8 @@ async function sendConfirmation(env: Env, to: string, name: string, anlass: stri
 
 async function handleAnfrage(request: Request, env: Env) {
   if (!env.RESEND_API_KEY || !env.MAIL_TO) return json({ ok: false, error: 'not-configured' }, 500)
+  // Anfrage samt PDF ist normalerweise deutlich unter 1 MB; größere Anfragen gar nicht erst einlesen.
+  if (Number(request.headers.get('content-length') ?? 0) > 5_000_000) return json({ ok: false, error: 'too-large' }, 413)
   let d: Record<string, unknown>
   try {
     d = await request.json()

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useReducedMotion } from 'framer-motion'
-import { MARQUEE_IMAGES, type MarqueeImage } from '../data/assets'
+import { MARQUEE_IMAGES, thumb, type MarqueeImage } from '../data/assets'
 import { PROJECTS } from '../data/content'
 import { goTo } from '../lib/links'
 
@@ -28,7 +28,7 @@ function Row({ images, rowRef }: { images: MarqueeImage[]; rowRef: React.RefObje
             tabIndex={i >= images.length && i < images.length * 2 ? 0 : -1}
             className="group relative block h-[325px] w-[260px] shrink-0 overflow-hidden rounded-2xl bg-[#161616]"
           >
-            <img src={src} alt="" loading="lazy" draggable={false} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+            <img src={thumb(src)} alt="" loading="lazy" width={260} height={325} draggable={false} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
             <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-[#0C0C0C]/90 via-[#0C0C0C]/40 to-transparent px-4 pb-4 pt-16 text-sm font-medium uppercase tracking-wider text-[#D7E2EA] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
               {name} →
             </span>

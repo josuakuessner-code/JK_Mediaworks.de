@@ -18,7 +18,7 @@ export default function LeistungenSection() {
               </span>
               <div className="flex flex-col gap-3 text-[#0C0C0C]">
                 <h3 className="font-medium uppercase" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>{s.name}</h3>
-                <p className="max-w-2xl font-light leading-relaxed opacity-60" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 1.25rem)' }}>{s.text}</p>
+                <p className="max-w-2xl font-light leading-relaxed text-[#0C0C0C]/75" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 1.25rem)' }}>{s.text}</p>
               </div>
             </div>
           </FadeIn>

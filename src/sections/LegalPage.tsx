@@ -64,7 +64,7 @@ export default function LegalPage({ page }: { page: 'impressum' | 'datenschutz' 
 
   return (
     <main lang="de" className="mx-auto min-h-screen max-w-3xl px-6 py-12 text-[#D7E2EA] md:py-20 [&_a]:underline [&_h2]:mb-2 [&_h2]:mt-8 [&_h2]:text-xl [&_h2]:font-medium [&_h2]:uppercase [&_p]:font-light [&_p]:leading-relaxed">
-      <a href="/" onClick={goTo} className="mb-10 inline-block text-sm font-medium uppercase tracking-wider no-underline transition-opacity duration-200 hover:opacity-70">← Zurück</a>
+      <a href="/" onClick={goTo} className="-mt-3 mb-7 inline-block py-3 text-sm font-medium uppercase tracking-wider no-underline transition-opacity duration-200 hover:opacity-70">← Zurück</a>
       {page === 'impressum' ? <Impressum /> : <Datenschutz />}
     </main>
   )

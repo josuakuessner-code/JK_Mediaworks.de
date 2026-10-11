@@ -12,10 +12,12 @@ export default function Lightbox({ images, index, onIndex, onClose }: Props) {
 
   useEffect(() => {
     const prevOverflow = document.body.style.overflow
+    const opener = document.activeElement as HTMLElement | null
     document.body.style.overflow = 'hidden'
     closeRef.current?.focus()
     return () => {
       document.body.style.overflow = prevOverflow
+      opener?.focus({ preventScroll: true }) // Tastaturfokus zurück auf das geöffnete Foto
     }
   }, [])
 

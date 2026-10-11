@@ -158,7 +158,7 @@ export default function ContactPage() {
 
   return (
     <main lang="de" className="relative mx-auto min-h-screen max-w-6xl px-5 py-10 text-[#D7E2EA] sm:px-8 md:py-16">
-      <a href="/" onClick={goTo} className="press mb-10 inline-block text-sm font-medium uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">← Zurück</a>
+      <a href="/" onClick={goTo} className="press -mt-3 mb-7 inline-block py-3 text-sm font-medium uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">← Zurück</a>
 
       <FadeIn y={40}>
         <h1 className="hero-heading mb-6 text-center font-black uppercase leading-none tracking-tight" style={{ fontSize: 'clamp(3rem, 13vw, 170px)' }}>

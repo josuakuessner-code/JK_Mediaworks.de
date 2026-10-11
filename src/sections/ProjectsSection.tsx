@@ -4,7 +4,7 @@ import Lightbox from '../components/Lightbox'
 import FadeIn from '../components/FadeIn'
 import LiveProjectButton from '../components/LiveProjectButton'
 import { goTo } from '../lib/links'
-import { PROJECT_IMAGES } from '../data/assets'
+import { PROJECT_IMAGES, thumb } from '../data/assets'
 import { CATEGORIES, PROJECTS, type Category } from '../data/content'
 
 const R = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]'
@@ -37,7 +37,7 @@ function Card({ p, index, total }: { p: Project; index: number; total: number })
             </span>
             <div className="flex flex-col">
               <span className="font-light uppercase tracking-widest text-[#D7E2EA]/70" style={{ fontSize: 'clamp(0.75rem, 1.2vw, 1rem)' }}>{p.category}</span>
-              <h3 className="font-medium uppercase text-[#D7E2EA]" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>{p.name}</h3>
+              <h2 className="font-medium uppercase text-[#D7E2EA]" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>{p.name}</h2>
             </div>
           </div>
           <LiveProjectButton href={`/projekt/${p.id}`} label="Zum Projekt" />
@@ -45,7 +45,7 @@ function Card({ p, index, total }: { p: Project; index: number; total: number })
         <div className={`grid gap-3 sm:gap-4 ${gridCols(imgs.length)}`}>
           {imgs.map((src, i) => (
             <button key={src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${items[i].alt}`} className="block cursor-zoom-in overflow-hidden rounded-2xl sm:rounded-3xl md:rounded-[36px]">
-              <img src={src} alt={items[i].alt} loading="lazy" className="aspect-[4/5] w-full bg-[#161616] object-cover transition-transform duration-500 hover:scale-[1.03]" />
+              <img src={thumb(src)} alt={items[i].alt} loading={index === 0 ? 'eager' : 'lazy'} width={600} height={750} className="aspect-[4/5] w-full bg-[#161616] object-cover transition-transform duration-500 hover:scale-[1.03]" />
             </button>
           ))}
         </div>
@@ -62,7 +62,7 @@ export default function ProjectsSection() {
     `press rounded-full border-2 px-5 py-2 text-xs font-medium uppercase tracking-widest transition-colors sm:px-7 sm:py-2.5 sm:text-sm ${active ? 'border-[#D7E2EA] bg-[#D7E2EA] text-[#0C0C0C]' : 'border-[#D7E2EA]/60 text-[#D7E2EA] hover:bg-[#D7E2EA]/10'}`
   return (
     <main className="relative z-10 min-h-screen bg-[#0C0C0C] px-5 pb-20 pt-8 sm:px-8 sm:pb-24 md:px-10 md:pb-32 md:pt-12">
-      <a href="/" onClick={goTo} className="press mb-10 inline-block text-sm font-medium uppercase tracking-wider text-[#D7E2EA] transition-opacity duration-200 hover:opacity-70">← Startseite</a>
+      <a href="/" onClick={goTo} className="press -mt-3 mb-7 inline-block py-3 text-sm font-medium uppercase tracking-wider text-[#D7E2EA] transition-opacity duration-200 hover:opacity-70">← Startseite</a>
       <FadeIn y={40}>
         <h1 className="hero-heading mb-10 text-center font-black uppercase leading-none tracking-tight sm:mb-12" style={{ fontSize: 'clamp(3rem, 12vw, 160px)' }}>
           Projekte

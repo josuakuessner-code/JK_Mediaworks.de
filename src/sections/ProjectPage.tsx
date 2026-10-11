@@ -2,7 +2,7 @@ import { useState } from 'react'
 import FadeIn from '../components/FadeIn'
 import Lightbox from '../components/Lightbox'
 import ContactButton from '../components/ContactButton'
-import { PROJECT_IMAGES } from '../data/assets'
+import { PROJECT_IMAGES, thumb } from '../data/assets'
 import { PROJECTS } from '../data/content'
 import { goTo } from '../lib/links'
 
@@ -23,7 +23,7 @@ export default function ProjectPage({ id }: { id: string }) {
 
   return (
     <main className="mx-auto min-h-screen max-w-7xl px-5 py-10 text-[#D7E2EA] sm:px-8 md:py-16">
-      <a href="/projekte" onClick={goTo} className="press mb-10 inline-block text-sm font-medium uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">← Alle Projekte</a>
+      <a href="/projekte" onClick={goTo} className="press -mt-3 mb-7 inline-block py-3 text-sm font-medium uppercase tracking-wider transition-opacity duration-200 hover:opacity-70">← Alle Projekte</a>
       <FadeIn y={30}>
         <p className="font-light uppercase tracking-widest text-[#D7E2EA]/70" style={{ fontSize: 'clamp(0.75rem, 1.2vw, 1rem)' }}>{p.category}</p>
         <h1 className="hero-heading mb-10 mt-2 font-black uppercase leading-none tracking-tight sm:mb-14" style={{ fontSize: 'clamp(2rem, 7vw, 96px)' }}>{p.name}</h1>
@@ -31,7 +31,7 @@ export default function ProjectPage({ id }: { id: string }) {
       <div className="grid grid-cols-2 items-start gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
         {items.map((it, i) => (
           <button key={it.src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${it.alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-2xl md:rounded-3xl">
-            <img src={it.src} alt={it.alt} loading="lazy" draggable={false} className="block w-full bg-[#161616] transition-transform duration-500 hover:scale-[1.03]" />
+            <img src={thumb(it.src)} alt={it.alt} loading={i < 4 ? 'eager' : 'lazy'} width={600} height={900} draggable={false} className="block h-auto w-full bg-[#161616] transition-transform duration-500 hover:scale-[1.03]" />
           </button>
         ))}
       </div>

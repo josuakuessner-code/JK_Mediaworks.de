@@ -15,6 +15,16 @@ for (const path of Object.keys(CARD_FILES).sort()) {
   ;(CURATED[id] ||= []).push(CARD_FILES[path])
 }
 export const PROJECT_IMAGES: Record<string, string[]> = CURATED
+
+// Kleine Vorschaubilder (src/assets/thumbs, erzeugt mit scripts/make-thumbs.py) für Raster, Karten und Laufband.
+// Fehlt ein Vorschaubild (neues Foto, Skript noch nicht gelaufen), wird das Original genommen.
+const THUMB_FILES = import.meta.glob('../assets/thumbs/*/*.webp', { eager: true, query: '?url', import: 'default' }) as Record<string, string>
+const THUMB_BY_FULL = new Map<string, string>()
+for (const path of Object.keys(CARD_FILES)) {
+  const t = THUMB_FILES[path.replace('/cards/', '/thumbs/')]
+  if (t) THUMB_BY_FULL.set(CARD_FILES[path], t)
+}
+export const thumb = (full: string) => THUMB_BY_FULL.get(full) ?? full
 export const BTS_IMAGES: string[] = CURATED['behind-the-scenes'] ?? []
 
 // Laufband: bei jedem Seitenaufruf 24 zufällige Fotos aus den Projekten, höchstens 3 je Projekt (mit Projekt-ID für den Link)

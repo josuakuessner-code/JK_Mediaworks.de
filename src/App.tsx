@@ -93,7 +93,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div style={{ background: '#0C0C0C', overflowX: 'clip' }}>
         {page === 'home' ? (
-          <>
+          <main>
             <HeroSection />
             <MarqueeSection />
             <AboutSection />
@@ -101,7 +101,7 @@ export default function App() {
             <ServicesSection />
             <ProjectsTeaser />
             <ContactSection />
-          </>
+          </main>
         ) : page === 'notfound' ? (
           <NotFoundPage />
         ) : page === 'projekt' ? (
