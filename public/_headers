@@ -1,4 +1,6 @@
 /*
+  # CSP: erlaubt nur eigene Dateien plus Cloudflare Turnstile (Anfrageformular) und Cloudflare Web Analytics.
+  # Neue externe Dienste (Schriften, Videos, Skripte) müssen hier eingetragen werden, sonst blockiert sie der Browser.
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
