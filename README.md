@@ -28,3 +28,7 @@ Einrichtung bei Cloudflare (Workers & Pages, „Create", „Connect to Git"):
 - Neu deployen, dann eine Test-Anfrage senden.
 
 Im Datenschutz-Abschnitt „Anfrageformular" (`LegalPage.tsx`) die violetten Platzhalter ausfüllen und mit Resend und Cloudflare je einen Auftragsverarbeitungsvertrag abschließen.
+
+## Sicherheits-Header
+
+`public/_headers` setzt unter anderem eine Content-Security-Policy. Wer einen neuen externen Dienst einbindet (Schriften, Videos, Skripte), muss ihn dort freigeben, sonst blockiert ihn der Browser.
