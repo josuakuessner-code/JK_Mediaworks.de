@@ -41,6 +41,42 @@ a {
 .press:active {
   transform: scale(0.97);
 }
+/* Während die Fotogalerie gezogen wird, kein Druck-Effekt auf der Kachel */
+.dragging .press:active {
+  transform: none;
+}
+
+/* Hover-Zoom auf Fotos: kurz und mit derselben Kurve wie der Druck-Effekt */
+.zoom {
+  transition: transform 280ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Glas-Knöpfe der Bildansicht */
+.glass {
+  background: rgba(12, 12, 12, 0.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: #0c0c0c;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@media (prefers-contrast: more) {
+  .glass {
+    background: #0c0c0c;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border: 2px solid #d7e2ea;
+  }
+}
+
+/* Inline-Prüfung: erst nach Verlassen eines Feldes rot markieren */
+[data-touched]:invalid {
+  border-color: #ff8a4c;
+}
 
 :focus-visible {
   outline: 2px solid #bbccd7;
@@ -50,6 +86,20 @@ a {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+  /* Kein Zoomen und Schrumpfen: Druck-Feedback nur über Helligkeit */
+  .zoom,
+  .zoom:hover,
+  .group:hover .zoom {
+    transform: none !important;
+    transition: none;
+  }
+  .press {
+    transition: opacity 150ms ease;
+  }
+  .press:active {
+    transform: none;
+    opacity: 0.75;
   }
 }
 

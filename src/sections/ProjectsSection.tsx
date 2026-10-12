@@ -44,8 +44,8 @@ function Card({ p, index, total }: { p: Project; index: number; total: number })
         </div>
         <div className={`grid gap-3 sm:gap-4 ${gridCols(imgs.length)}`}>
           {imgs.map((src, i) => (
-            <button key={src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${items[i].alt}`} className="block cursor-zoom-in overflow-hidden rounded-2xl sm:rounded-3xl md:rounded-[36px]">
-              <img src={thumb(src)} alt={items[i].alt} loading={index === 0 ? 'eager' : 'lazy'} width={600} height={750} className="aspect-[4/5] w-full bg-[#161616] object-cover transition-transform duration-500 hover:scale-[1.03]" />
+            <button key={src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${items[i].alt}`} className="press block cursor-zoom-in overflow-hidden rounded-2xl sm:rounded-3xl md:rounded-[36px]">
+              <img src={thumb(src)} alt={items[i].alt} loading={index === 0 ? 'eager' : 'lazy'} width={600} height={750} className="aspect-[4/5] w-full bg-[#161616] object-cover zoom hover:scale-[1.03]" />
             </button>
           ))}
         </div>

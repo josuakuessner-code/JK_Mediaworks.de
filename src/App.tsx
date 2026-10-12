@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { MotionConfig } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { MotionConfig, motion } from 'framer-motion'
 import HeroSection from './sections/HeroSection'
 import MarqueeSection from './sections/MarqueeSection'
 import AboutSection from './sections/AboutSection'
@@ -53,15 +53,41 @@ const setMeta = (selector: string, attr: string, value: string) => document.head
 const legacy = window.location.hash.match(/^#\/(kontakt|impressum|datenschutz)$/)
 if (legacy) window.history.replaceState(null, '', `/${legacy[1]}`)
 
+if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
+
 export default function App() {
   const [page, setPage] = useState(route())
+  const firstRender = useRef(true)
   useEffect(() => {
-    const on = () => {
-      setPage(route())
-      window.scrollTo(0, 0)
+    firstRender.current = false
+  }, [])
+  useEffect(() => {
+    // Scroll-Position im aktuellen Verlaufseintrag merken, damit „Zurück“ an dieselbe Stelle führt
+    let t = 0
+    const save = () => {
+      clearTimeout(t)
+      t = window.setTimeout(() => {
+        try {
+          window.history.replaceState({ ...(window.history.state ?? {}), scroll: window.scrollY }, '')
+        } catch {
+          /* z. B. eingebettete Vorschau */
+        }
+      }, 150)
     }
+    const on = () => {
+      clearTimeout(t)
+      const y = (window.history.state as { scroll?: number } | null)?.scroll ?? 0
+      setPage(route())
+      // nach dem Rendern der neuen Seite an die gemerkte Stelle (neue Seiten: oben)
+      requestAnimationFrame(() => window.scrollTo(0, y))
+    }
+    window.addEventListener('scroll', save, { passive: true })
     window.addEventListener('popstate', on)
-    return () => window.removeEventListener('popstate', on)
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('scroll', save)
+      window.removeEventListener('popstate', on)
+    }
   }, [])
 
   const pid = page === 'projekt' ? projectId() : ''
@@ -92,6 +118,13 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div style={{ background: '#0C0C0C', overflowX: 'clip' }}>
+        {/* Kurzes Einblenden beim Seitenwechsel (nicht beim ersten Laden, damit das Startbild sofort steht) */}
+        <motion.div
+          key={page === 'projekt' ? `projekt-${pid}` : page}
+          initial={firstRender.current ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25, ease: [0.23, 1, 0.32, 1] }}
+        >
         {page === 'home' ? (
           <main>
             <HeroSection />
@@ -113,6 +146,7 @@ export default function App() {
         ) : (
           <LegalPage page={page} />
         )}
+        </motion.div>
         {(page === 'home' || page === 'projekt' || page === 'projekte') && <StickyCta />}
       </div>
     </MotionConfig>

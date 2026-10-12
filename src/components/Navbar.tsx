@@ -14,7 +14,7 @@ export default function Navbar() {
           key={l.label}
           href={l.href}
           onClick={goTo}
-          className="-my-3 py-3 text-sm font-medium uppercase tracking-wider text-[#D7E2EA] transition-opacity duration-200 hover:opacity-70 md:text-lg lg:text-[1.4rem]"
+          className="press -my-3 py-3 text-sm font-medium uppercase tracking-wider text-[#D7E2EA] transition-opacity duration-200 hover:opacity-70 md:text-lg lg:text-[1.4rem]"
         >
           {l.label}
         </a>

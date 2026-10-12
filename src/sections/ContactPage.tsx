@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent, type MouseEvent, type ReactNode } from 'react'
+import { createContext, isValidElement, useContext, useEffect, useState, type FocusEvent, type FormEvent, type MouseEvent, type ReactNode } from 'react'
 import { Check, Download, Mail, MapPin } from 'lucide-react'
 import FadeIn from '../components/FadeIn'
 import CopyEmail from '../components/CopyEmail'
@@ -36,12 +36,31 @@ const Card = ({ title, children, delay = 0 }: { title: string; children: ReactNo
   </FadeIn>
 )
 
-const Field = ({ label, full, children }: { label: string; full?: boolean; children: ReactNode }) => (
-  <label className={`block min-w-0 ${full ? 'sm:col-span-2' : ''}`}>
-    <span className={labelCls}>{label}</span>
-    {children}
-  </label>
-)
+// Fehlermeldungen je Feldname; erscheinen erst, nachdem ein Feld verlassen wurde
+const FieldErrors = createContext<Record<string, string>>({})
+
+type Validatable = HTMLInputElement | HTMLTextAreaElement
+const messageFor = (el: Validatable) => {
+  const v = el.validity
+  if (v.valid) return ''
+  if (v.valueMissing) return 'Bitte ausfüllen.'
+  if (v.typeMismatch && el.type === 'email') return 'Bitte eine gültige E-Mail-Adresse eingeben.'
+  if (v.rangeUnderflow) return 'Das Enddatum liegt vor dem Startdatum.'
+  return el.validationMessage
+}
+
+const Field = ({ label, full, children }: { label: string; full?: boolean; children: ReactNode }) => {
+  const errors = useContext(FieldErrors)
+  const name = isValidElement<{ name?: string }>(children) ? children.props.name : undefined
+  const msg = name ? errors[name] : ''
+  return (
+    <label className={`block min-w-0 ${full ? 'sm:col-span-2' : ''}`}>
+      <span className={labelCls}>{label}</span>
+      {children}
+      {msg && <span className="mt-2 block text-sm text-[#FF8A4C]" aria-live="polite">{msg}</span>}
+    </label>
+  )
+}
 
 const Chip = ({ active, onClick, children, type }: { active: boolean; onClick: () => void; children: ReactNode; type: 'radio' | 'checkbox' }) => (
   <button
@@ -108,6 +127,19 @@ export default function ContactPage() {
 
   const toggle = (w: string) => setFormate((l) => (l.includes(w) ? l.filter((x) => x !== w) : [...l, w]))
 
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const check = (target: EventTarget, mark: boolean) => {
+    if (!(target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement) || !target.name || target.type === 'checkbox') return
+    if (mark) {
+      if (!target.required && !target.value && target.type !== 'email') return
+      target.setAttribute('data-touched', '')
+    } else if (!target.hasAttribute('data-touched')) return
+    const msg = messageFor(target)
+    target.setAttribute('aria-invalid', String(!!msg))
+    setErrors((prev) => ((prev[target.name] ?? '') === msg ? prev : { ...prev, [target.name]: msg }))
+  }
+  const onFieldBlur = (e: FocusEvent<HTMLFormElement>) => check(e.target, true)
+
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (!anlass) {
@@ -151,7 +183,7 @@ export default function ContactPage() {
       // PDF-Baustein nicht ladbar (z. B. veraltete Seite nach einem Update): Mail-Fallback statt endlosem Laden
       setStatus('error')
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
   }
 
   const done = status === 'sent' || status === 'error'
@@ -221,7 +253,8 @@ export default function ContactPage() {
               </div>
             </FadeIn>
           ) : (
-            <form id="anfrage-form" onSubmit={submit} className="flex flex-col gap-6" noValidate={false} aria-busy={status === 'sending'}>
+            <FieldErrors.Provider value={errors}>
+            <form id="anfrage-form" onSubmit={submit} onBlur={onFieldBlur} onChange={(e) => check(e.target, false)} className="flex flex-col gap-6" noValidate={false} aria-busy={status === 'sending'}>
               <Card title="Kontakt">
                 <Field label="Name *"><input name="name" required autoComplete="name" className={field} placeholder="Vor- und Nachname" /></Field>
                 <Field label="E-Mail *"><input name="email" type="email" required autoComplete="email" className={field} placeholder="du@beispiel.de" /></Field>
@@ -242,7 +275,7 @@ export default function ContactPage() {
                     <span className={labelCls}>Titel oder kurze Beschreibung (optional)</span>
                     <input name="titel" maxLength={160} className={field} placeholder="z. B. Sommerfest TSV Musterstadt oder Abiball 2027" />
                   </label>
-                  {anlassMissing && <p role="alert" className="mt-4 text-sm text-[#BE4C00]">Bitte wähle einen Anlass aus.</p>}
+                  {anlassMissing && <p role="alert" className="mt-4 text-sm text-[#FF8A4C]">Bitte wähle einen Anlass aus.</p>}
                 </fieldset>
               </FadeIn>
 
@@ -311,6 +344,7 @@ export default function ContactPage() {
                 {!consent && <p className="mt-3 text-sm font-light text-[#D7E2EA]/60">Bitte bestätige zuerst die Datenschutzerklärung, dann kannst du die Anfrage senden.</p>}
               </FadeIn>
             </form>
+            </FieldErrors.Provider>
           )}
         </div>
       </div>

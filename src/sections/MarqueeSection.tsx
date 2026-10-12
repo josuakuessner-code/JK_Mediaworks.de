@@ -26,9 +26,9 @@ function Row({ images, rowRef }: { images: MarqueeImage[]; rowRef: React.RefObje
             draggable={false}
             aria-label={`Projekt ansehen: ${name}`}
             tabIndex={i >= images.length && i < images.length * 2 ? 0 : -1}
-            className="group relative block h-[325px] w-[260px] shrink-0 overflow-hidden rounded-2xl bg-[#161616]"
+            className="press group relative block h-[325px] w-[260px] shrink-0 overflow-hidden rounded-2xl bg-[#161616]"
           >
-            <img src={thumb(src)} alt="" loading="lazy" width={260} height={325} draggable={false} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]" />
+            <img src={thumb(src)} alt="" loading="lazy" width={260} height={325} draggable={false} className="h-full w-full object-cover zoom group-hover:scale-[1.05]" />
             <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-[#0C0C0C]/90 via-[#0C0C0C]/40 to-transparent px-4 pb-4 pt-16 text-sm font-medium uppercase tracking-wider text-[#D7E2EA] opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
               {name} →
             </span>
@@ -53,10 +53,12 @@ export default function MarqueeSection() {
     const S2 = ROW2.length * (TILE + GAP)
     const wrap = (v: number, s: number) => ((((v + s / 2) % s) + s) % s) - s / 2 // endlos: Bilder wiederholen sich im Takt s
     let raf = 0
+    let top = 0 // Oberkante der Galerie im Dokument, zwischengespeichert statt pro Frame gemessen
+    let visible = false
+    const measure = () => { top = el.getBoundingClientRect().top + window.scrollY }
     const update = () => {
       raf = 0
       if (!row1.current || !row2.current) return
-      const top = el.getBoundingClientRect().top + window.scrollY
       const offset = reduce ? 0 : (window.scrollY - top + window.innerHeight) * 0.3 - 200
       row1.current.style.transform = `translateX(${wrap(offset + user.current, S1)}px)`
       row2.current.style.transform = `translateX(${wrap(-offset + user.current, S2)}px)`
@@ -64,14 +66,24 @@ export default function MarqueeSection() {
     const request = () => {
       if (!raf) raf = requestAnimationFrame(update)
     }
+    const onScroll = () => { if (visible) request() }
+    const onResize = () => { measure(); request() }
+    // Nur rechnen, solange die Galerie im Bild ist
+    const io = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting
+      if (visible) { measure(); request() }
+    })
+    io.observe(el)
 
     // Ziehen (Maus/Touch), seitliches Trackpad-Scrollen und Auslaufen nach dem Loslassen
-    let down = false, dragging = false, startX = 0, lastX = 0, lastT = 0, vel = 0, glide = 0, moved = 0
+    let down = false, dragging = false, startX = 0, lastX = 0, moved = 0, glide = 0
+    let samples: { x: number; t: number }[] = [] // Bewegungsverlauf der letzten ~100 ms für die Loslass-Geschwindigkeit
     const stopGlide = () => { if (glide) cancelAnimationFrame(glide); glide = 0 }
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === 'mouse' && e.button !== 0) return
       stopGlide()
-      down = true; dragging = false; moved = 0; startX = lastX = e.clientX; lastT = performance.now(); vel = 0
+      down = true; dragging = false; moved = 0; startX = lastX = e.clientX
+      samples = [{ x: e.clientX, t: performance.now() }]
     }
     const onMove = (e: PointerEvent) => {
       if (!down) return
@@ -81,11 +93,13 @@ export default function MarqueeSection() {
         dragging = true
         el.setPointerCapture(e.pointerId)
         el.style.cursor = 'grabbing'
+        el.classList.add('dragging')
       }
-      if (!dragging) return
+      lastX = e.clientX
       const now = performance.now()
-      vel = dx / Math.max(1, now - lastT)
-      lastX = e.clientX; lastT = now
+      samples.push({ x: e.clientX, t: now })
+      while (samples.length > 2 && now - samples[0].t > 100) samples.shift()
+      if (!dragging) return
       user.current += dx
       request()
     }
@@ -93,16 +107,25 @@ export default function MarqueeSection() {
       if (!down) return
       down = false
       el.style.cursor = ''
+      el.classList.remove('dragging')
       if (!dragging) return
-      let v = vel * 16
-      const step = () => {
-        v *= 0.94
-        user.current += v
+      setTimeout(() => { dragging = false }, 0)
+      // Geschwindigkeit in px/ms aus dem Verlauf; wer vor dem Loslassen kurz stillhält, lässt nicht auslaufen
+      const now = performance.now()
+      const last = samples[samples.length - 1]
+      const first = samples[0]
+      let v = now - last.t > 80 || last.t === first.t ? 0 : (last.x - first.x) / (last.t - first.t)
+      if (Math.abs(v) < 0.05) return
+      let prev = now
+      const step = (t: number) => {
+        const dt = Math.min(64, t - prev) // Bildrate egal: gleiche Bremswirkung bei 60 und 120 Hz
+        prev = t
+        user.current += v * dt
+        v *= Math.pow(0.94, dt / 16.7)
         request()
-        glide = Math.abs(v) > 0.3 ? requestAnimationFrame(step) : 0
+        glide = Math.abs(v) > 0.02 ? requestAnimationFrame(step) : 0
       }
       glide = requestAnimationFrame(step)
-      setTimeout(() => { dragging = false }, 0)
     }
     const onClick = (e: MouseEvent) => {
       if (moved > 6) { e.preventDefault(); e.stopPropagation(); moved = 0 }
@@ -114,9 +137,10 @@ export default function MarqueeSection() {
       request()
     }
 
+    measure()
     update()
-    window.addEventListener('scroll', request, { passive: true })
-    window.addEventListener('resize', request, { passive: true })
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onResize, { passive: true })
     el.addEventListener('pointerdown', onDown)
     el.addEventListener('pointermove', onMove)
     el.addEventListener('pointerup', onUp)
@@ -124,8 +148,9 @@ export default function MarqueeSection() {
     el.addEventListener('click', onClick, true)
     el.addEventListener('wheel', onWheel, { passive: false })
     return () => {
-      window.removeEventListener('scroll', request)
-      window.removeEventListener('resize', request)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onResize)
+      io.disconnect()
       el.removeEventListener('pointerdown', onDown)
       el.removeEventListener('pointermove', onMove)
       el.removeEventListener('pointerup', onUp)

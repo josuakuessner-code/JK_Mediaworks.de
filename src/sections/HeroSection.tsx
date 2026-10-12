@@ -23,7 +23,7 @@ export default function HeroSection() {
 
       <div className="absolute left-1/2 top-1/2 z-10 w-max -translate-x-1/2 -translate-y-1/2 sm:bottom-0 sm:top-auto sm:translate-y-0">
         <FadeIn y={30} delay={0.6}>
-          <Magnet padding={150} strength={3} activeTransition="transform 0.3s ease-out" inactiveTransition="transform 0.6s ease-in-out">
+          <Magnet padding={150} strength={3}>
             <img
               src={HERO_PORTRAIT}
               alt="Porträt von Josua Küßner"

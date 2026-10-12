@@ -21,8 +21,8 @@ export default function BehindTheScenes() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-6">
           {items.map((it, i) => (
             <FadeIn key={it.src} y={30} delay={0.05 * i} className={i % 2 === 1 ? 'lg:mt-10' : ''}>
-              <button type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${it.alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-2xl md:rounded-3xl">
-                <img src={thumb(it.src)} alt={it.alt} loading="lazy" width={600} height={900} draggable={false} className="aspect-[2/3] w-full bg-[#161616] object-cover transition-transform duration-500 hover:scale-[1.03]" />
+              <button type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${it.alt}`} className="press block w-full cursor-zoom-in overflow-hidden rounded-2xl md:rounded-3xl">
+                <img src={thumb(it.src)} alt={it.alt} loading="lazy" width={600} height={900} draggable={false} className="aspect-[2/3] w-full bg-[#161616] object-cover zoom hover:scale-[1.03]" />
               </button>
             </FadeIn>
           ))}

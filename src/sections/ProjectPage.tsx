@@ -30,8 +30,8 @@ export default function ProjectPage({ id }: { id: string }) {
       </FadeIn>
       <div className="grid grid-cols-2 items-start gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
         {items.map((it, i) => (
-          <button key={it.src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${it.alt}`} className="block w-full cursor-zoom-in overflow-hidden rounded-2xl md:rounded-3xl">
-            <img src={thumb(it.src)} alt={it.alt} loading={i < 4 ? 'eager' : 'lazy'} width={600} height={900} draggable={false} className="block h-auto w-full bg-[#161616] transition-transform duration-500 hover:scale-[1.03]" />
+          <button key={it.src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${it.alt}`} className="press block w-full cursor-zoom-in overflow-hidden rounded-2xl md:rounded-3xl">
+            <img src={thumb(it.src)} alt={it.alt} loading={i < 4 ? 'eager' : 'lazy'} width={600} height={900} draggable={false} className="block h-auto w-full bg-[#161616] zoom hover:scale-[1.03]" />
           </button>
         ))}
       </div>

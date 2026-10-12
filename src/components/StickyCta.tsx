@@ -29,7 +29,7 @@ export default function StickyCta() {
       onClick={goTo}
       aria-hidden={hidden}
       tabIndex={hidden ? -1 : 0}
-      className={`press fixed bottom-4 right-4 z-40 rounded-full px-6 py-3 text-xs font-medium uppercase tracking-widest text-white transition-all duration-300 hover:scale-[1.04] sm:px-8 sm:text-sm md:bottom-8 md:right-8 md:px-10 md:py-3.5 md:text-base ${hidden ? 'pointer-events-none translate-y-4 opacity-0' : 'opacity-100'}`}
+      className={`press fixed bottom-4 right-4 z-40 rounded-full px-6 py-3 text-xs font-medium uppercase tracking-widest text-white hover:scale-[1.04] motion-reduce:hover:scale-100 sm:px-8 sm:text-sm md:bottom-8 md:right-8 md:px-10 md:py-3.5 md:text-base ${hidden ? 'pointer-events-none translate-y-4 opacity-0 motion-reduce:translate-y-0' : 'opacity-100'}`}
       style={{
         background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)',
         boxShadow: '0 6px 20px rgba(118, 33, 176, 0.45)',

@@ -19,6 +19,8 @@ export function goTo(e: MouseEvent<HTMLAnchorElement>) {
 // Seitenwechsel über echte Pfade (/kontakt, /impressum …) ohne Neuladen.
 export function navigate(path: string) {
   try {
+    // aktuelle Scroll-Position sichern, damit „Zurück“ wieder hierhin führt
+    window.history.replaceState({ ...(window.history.state ?? {}), scroll: window.scrollY }, '')
     window.history.pushState(null, '', path)
   } catch {
     window.location.assign(path)
