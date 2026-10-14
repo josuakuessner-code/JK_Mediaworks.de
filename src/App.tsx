@@ -13,6 +13,7 @@ import ContactPage from './sections/ContactPage'
 import ProjectPage from './sections/ProjectPage'
 import NotFoundPage from './sections/NotFoundPage'
 import StickyCta from './components/StickyCta'
+import BackToTop from './components/BackToTop'
 import { PROJECTS } from './data/content'
 
 const PAGES = ['projekte', 'kontakt', 'impressum', 'datenschutz'] as const
@@ -148,6 +149,7 @@ export default function App() {
         )}
         </motion.div>
         {(page === 'home' || page === 'projekt' || page === 'projekte') && <StickyCta />}
+        {(page === 'home' || page === 'projekt' || page === 'projekte') && <BackToTop />}
       </div>
     </MotionConfig>
   )
