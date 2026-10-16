@@ -4,24 +4,33 @@ import { goTo } from '../lib/links'
 // Immer sichtbar: schwebender Kontakt-Knopf unten rechts, auf Handy und Desktop.
 // Wenn ein Kontakt-Knopf der Seite selbst unten im Bild ankommt, blendet er sich aus, damit keine zwei Knöpfe übereinander liegen.
 export default function StickyCta() {
-  const [hidden, setHidden] = useState(false)
+  const [hidden, setHidden] = useState(true)
   useEffect(() => {
-    const targets = [...document.querySelectorAll<HTMLElement>('a[href="/kontakt"]')].filter((el) => !el.classList.contains('fixed'))
-    if (!targets.length) return
-    const inZone = new Set<Element>()
-    // Beobachtet nur den unteren Bildschirmrand: dort liegt der schwebende Knopf.
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries) {
-          if (e.isIntersecting) inZone.add(e.target)
-          else inZone.delete(e.target)
-        }
-        setHidden(inZone.size > 0)
-      },
-      { rootMargin: '-82% 0px 0px 0px' },
-    )
-    targets.forEach((t) => io.observe(t))
-    return () => io.disconnect()
+    // Prüft bei jedem Scroll, Resize und DOM-Wechsel frisch, ob ein Kontakt-Knopf der Seite im unteren Bildschirmrand liegt.
+    // (Seiten werden nachgeladen und blenden ein, deshalb nicht nur einmal beim Start beobachten.)
+    let raf = 0
+    const check = () => {
+      raf = 0
+      const zoneTop = window.innerHeight * 0.82
+      const overlap = [...document.querySelectorAll<HTMLElement>('a[href="/kontakt"]')].some((el) => {
+        if (el.classList.contains('fixed')) return false
+        const r = el.getBoundingClientRect()
+        return r.height > 0 && r.bottom > zoneTop && r.top < window.innerHeight
+      })
+      setHidden(overlap)
+    }
+    const schedule = () => { if (!raf) raf = requestAnimationFrame(check) }
+    schedule()
+    window.addEventListener('scroll', schedule, { passive: true })
+    window.addEventListener('resize', schedule, { passive: true })
+    const mo = new MutationObserver(schedule)
+    mo.observe(document.body, { childList: true, subtree: true })
+    return () => {
+      cancelAnimationFrame(raf)
+      window.removeEventListener('scroll', schedule)
+      window.removeEventListener('resize', schedule)
+      mo.disconnect()
+    }
   }, [])
   return (
     <a
