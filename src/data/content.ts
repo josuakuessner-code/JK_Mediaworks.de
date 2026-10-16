@@ -32,6 +32,7 @@ export const PROJECTS: { id: string; group: Category; category: string; name: st
   { id: 'nls-nuerburgring', group: 'Motorsport', category: 'Motorsport · Langstrecke', name: 'FK Performance · NLS Nürburgring' },
   { id: 'hochzeit-schweden', group: 'Hochzeiten', category: 'Hochzeit · Schweden', name: 'Robin & Judith in Schweden' },
   { id: 'hochzeit-toscana', group: 'Hochzeiten', category: 'Hochzeit · Toscana', name: 'Vicky & Tizian in der Toscana' },
+  { id: 'hochzeit-alina-ben', group: 'Hochzeiten', category: 'Hochzeit · Rhein-Main', name: 'Alina & Ben im Rhein-Main-Gebiet' },
   { id: 'media-day-eintracht', group: 'Media Days', category: 'Media Day · Volleyball', name: 'Eintracht Wiesbaden' },
   { id: 'media-day-jugend', group: 'Media Days', category: 'Media Day · Volleyball', name: 'Jugendnationalmannschaft' },
 ]

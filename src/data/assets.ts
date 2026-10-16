@@ -28,7 +28,7 @@ export const thumb = (full: string) => THUMB_BY_FULL.get(full) ?? full
 export const BTS_IMAGES: string[] = CURATED['behind-the-scenes'] ?? []
 
 // Laufband: bei jedem Seitenaufruf 24 zufällige Fotos aus den Projekten, höchstens 3 je Projekt (mit Projekt-ID für den Link)
-const MARQUEE_SOURCES = ['barock-volleys', 'dvv-pokalfinale', 'u18-4-nations-cup', 'u18-em-quali', 'u20-wevza', 'vc-wiesbaden', 'volley-juniors-frankfurt', 'fk-performance-24h', 'nls-nuerburgring', 'media-day-eintracht', 'media-day-jugend', 'hochzeit-schweden', 'hochzeit-toscana']
+const MARQUEE_SOURCES = ['barock-volleys', 'dvv-pokalfinale', 'u18-4-nations-cup', 'u18-em-quali', 'u20-wevza', 'vc-wiesbaden', 'volley-juniors-frankfurt', 'fk-performance-24h', 'nls-nuerburgring', 'media-day-eintracht', 'media-day-jugend', 'hochzeit-schweden', 'hochzeit-toscana', 'hochzeit-alina-ben']
 export type MarqueeImage = { src: string; id: string }
 function pickMarquee(count: number, perProject: number): MarqueeImage[] {
   const rnd = () => Math.random() - 0.5
