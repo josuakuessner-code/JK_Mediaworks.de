@@ -32,14 +32,14 @@ export default function CopyEmail({ className = '' }: { className?: string }) {
 
   return (
     <span className={`inline-flex items-center gap-3 ${className}`}>
-      <a href={`mailto:${SITE.email}`} onClick={openMail} className="text-[#D7E2EA] underline decoration-[#D7E2EA]/30 underline-offset-4 transition-opacity duration-200 hover:opacity-70">
+      <a href={`mailto:${SITE.email}`} onClick={openMail} className="inline-block py-3 text-[#D7E2EA] underline decoration-[#D7E2EA]/30 underline-offset-4 transition-opacity duration-200 hover:opacity-70">
         {SITE.email}
       </a>
       <button
         type="button"
         onClick={copy}
         aria-label={done ? 'E-Mail-Adresse kopiert' : 'E-Mail-Adresse kopieren'}
-        className="press inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#D7E2EA]/40 text-[#D7E2EA] transition-colors duration-200 hover:bg-[#D7E2EA]/10"
+        className="press inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#D7E2EA]/40 text-[#D7E2EA] transition-colors duration-200 hover:bg-[#D7E2EA]/10"
       >
         {done ? <Check size={16} aria-hidden /> : <Copy size={16} aria-hidden />}
       </button>

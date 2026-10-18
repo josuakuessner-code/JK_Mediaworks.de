@@ -1,5 +1,7 @@
 // Cloudflare Worker: liefert die Website (dist) aus und nimmt unter /api/anfrage die Anfrage samt PDF entgegen,
 // um sie per Resend an dein Postfach zu schicken. Einrichtung: README.md, Abschnitt "Anfrageformular".
+import { PROJECTS } from '../src/data/content'
+
 interface Env {
   ASSETS: { fetch: (r: Request) => Promise<Response> }
   RESEND_API_KEY: string
@@ -129,12 +131,21 @@ async function handleAnfrage(request: Request, env: Env) {
   return json({ ok: false, error: 'mail-failed' }, 502)
 }
 
+const PAGES = new Set(['/', '/projekte', '/kontakt', '/impressum', '/datenschutz'])
+const PROJECT_PATHS = new Set(PROJECTS.map((p) => `/projekt/${p.id}`))
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { pathname } = new URL(request.url)
     if (pathname === '/api/anfrage') {
       return request.method === 'POST' ? handleAnfrage(request, env) : json({ ok: false, error: 'method' }, 405)
     }
-    return env.ASSETS.fetch(request)
+    const res = await env.ASSETS.fetch(request)
+    // Unbekannte Seiten-Adressen (ohne Dateiendung) liefern die App weiter aus, aber mit Status 404 statt 200.
+    const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
+    if (request.method === 'GET' && !/\.[a-z0-9]+$/i.test(path) && !PAGES.has(path) && !PROJECT_PATHS.has(path) && (res.headers.get('content-type') ?? '').includes('text/html')) {
+      return new Response(res.body, { status: 404, headers: res.headers })
+    }
+    return res
   },
 }

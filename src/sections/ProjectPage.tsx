@@ -38,7 +38,7 @@ export default function ProjectPage({ id }: { id: string }) {
       <div className="mt-16 flex flex-col items-center gap-6 border-t border-[#D7E2EA]/15 pt-14 text-center">
         <p className="max-w-[460px] font-medium leading-relaxed" style={{ fontSize: 'clamp(1rem, 2vw, 1.25rem)' }}>Gefällt dir, was du siehst? Erzähl mir von deinem Event.</p>
         <ContactButton />
-        <a href="/projekte" onClick={goTo} className="text-sm font-light uppercase tracking-wider opacity-70 transition-opacity hover:opacity-100">← Alle Projekte</a>
+        <a href="/projekte" onClick={goTo} className="inline-block py-3 text-sm font-light uppercase tracking-wider opacity-70 transition-opacity hover:opacity-100">← Alle Projekte</a>
       </div>
       {open !== null && <Lightbox images={items} index={open} onIndex={setOpen} onClose={() => setOpen(null)} />}
     </main>

@@ -68,7 +68,7 @@ const Chip = ({ active, onClick, children, type }: { active: boolean; onClick: (
     role={type}
     aria-checked={active}
     onClick={onClick}
-    className={`press rounded-full border-2 px-5 py-2.5 text-sm font-medium uppercase tracking-wider transition-colors duration-200 ${
+    className={`press min-h-11 rounded-full border-2 px-5 py-2.5 text-sm font-medium uppercase tracking-wider transition-colors duration-200 ${
       active ? 'border-transparent text-white' : 'border-[#D7E2EA]/40 text-[#D7E2EA] hover:bg-[#D7E2EA]/10'
     }`}
     style={active ? { background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #BE4C00 100%)' } : undefined}
@@ -322,9 +322,9 @@ export default function ContactPage() {
               <FadeIn y={30}>
                 {TURNSTILE_KEY && <div className="cf-turnstile mb-6" data-sitekey={TURNSTILE_KEY} data-theme="dark" data-language="de" />}
                 <label className="mb-6 flex cursor-pointer items-start gap-4 text-sm font-light leading-relaxed">
-                  <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5 shrink-0 accent-[#B600A8]" />
+                  <input type="checkbox" required checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5 h-6 w-6 shrink-0 accent-[#B600A8]" />
                   <span>
-                    Ich habe die <a href="/datenschutz" onClick={goTo} className="underline underline-offset-4">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verarbeitet werden. *
+                    Ich habe die <a href="/datenschutz" onClick={goTo} className="inline-block py-2 underline underline-offset-4">Datenschutzerklärung</a> gelesen und bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verarbeitet werden. *
                   </span>
                 </label>
                 <button

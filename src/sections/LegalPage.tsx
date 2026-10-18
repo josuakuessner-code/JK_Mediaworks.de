@@ -10,7 +10,7 @@ function Impressum() {
       <h2>Anbieter</h2>
       <p>Josua Küßner<br />JK-Mediaworks<br />Freesienweg 27<br />65201 Wiesbaden</p>
       <h2>Kontakt</h2>
-      <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a><br />Telefon: <a href="tel:+4917642487640">+49 176 42487640</a></p>
+      <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail} className="inline-block py-2">{SITE.email}</a><br />Telefon: <a href="tel:+4917642487640" className="inline-block py-2">+49 176 42487640</a></p>
       <h2>Umsatzsteuer</h2>
       <p>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.</p>
     </>
@@ -23,7 +23,7 @@ function Datenschutz() {
       <h1 className="hero-heading mb-8 font-black uppercase leading-none" style={{ fontSize: 'clamp(2.5rem, 8vw, 90px)' }}>Datenschutz</h1>
       <p className="mb-6 text-sm text-[#D7E2EA]/60">Zuletzt aktualisiert am 5. Oktober 2026</p>
       <h2>Verantwortlicher</h2>
-      <p>Josua Küßner, JK-Mediaworks, Freesienweg 27, 65201 Wiesbaden, E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail}>{SITE.email}</a>, Telefon: <a href="tel:+4917642487640">+49 176 42487640</a></p>
+      <p>Josua Küßner, JK-Mediaworks, Freesienweg 27, 65201 Wiesbaden, E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail} className="inline-block py-2">{SITE.email}</a>, Telefon: <a href="tel:+4917642487640" className="inline-block py-2">+49 176 42487640</a></p>
       <h2>Überblick</h2>
       <p>Ich verarbeite personenbezogene Daten nur, soweit es für den Betrieb dieser Website und die Bearbeitung deiner Anfragen nötig ist. Diese Seite setzt keine Cookies, nutzt keine Werbedienste und bindet keine Inhalte von Drittanbietern wie Karten, Videos oder Schriftarten ein. Zur Reichweitenmessung kommt ausschließlich eine cookiefreie, anonyme Statistik von Cloudflare zum Einsatz (siehe unten).</p>
       <h2>Hosting und Server-Logfiles</h2>

@@ -18,7 +18,7 @@ export default function AboutSection() {
       {DECOS.map((d) => (
         <div key={d.src} className={`pointer-events-none absolute hidden xl:block ${d.wrap}`}>
           <FadeIn x={d.x} y={0} delay={d.delay} duration={0.9}>
-            <img src={d.src} alt="" loading="lazy" draggable={false} className={`${d.cls} aspect-[3/4] rounded-2xl object-cover`} />
+            <img src={d.src} alt="" loading="lazy" width={420} height={560} draggable={false} className={`${d.cls} aspect-[3/4] rounded-2xl object-cover`} />
           </FadeIn>
         </div>
       ))}
@@ -40,7 +40,7 @@ export default function AboutSection() {
       <div className="relative z-10 grid w-full max-w-[340px] grid-cols-2 gap-3 sm:max-w-[420px] xl:hidden">
         {DECOS.map((d, i) => (
           <FadeIn key={d.src} y={30} delay={0.05 * i}>
-            <img src={d.src} alt="" loading="lazy" draggable={false} className="aspect-[3/4] w-full rounded-2xl object-cover" />
+            <img src={d.src} alt="" loading="lazy" width={420} height={560} draggable={false} className="aspect-[3/4] w-full rounded-2xl object-cover" />
           </FadeIn>
         ))}
       </div>

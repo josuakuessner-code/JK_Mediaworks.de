@@ -59,7 +59,7 @@ export default function ProjectsSection() {
   const [filter, setFilter] = useState<Category | 'Alle'>('Alle')
   const list = filter === 'Alle' ? PROJECTS : PROJECTS.filter((p) => p.group === filter)
   const chip = (active: boolean) =>
-    `press rounded-full border-2 px-5 py-2 text-xs font-medium uppercase tracking-widest transition-colors sm:px-7 sm:py-2.5 sm:text-sm ${active ? 'border-[#D7E2EA] bg-[#D7E2EA] text-[#0C0C0C]' : 'border-[#D7E2EA]/60 text-[#D7E2EA] hover:bg-[#D7E2EA]/10'}`
+    `press min-h-11 rounded-full border-2 px-5 py-2 text-xs font-medium uppercase tracking-widest transition-colors sm:px-7 sm:py-2.5 sm:text-sm ${active ? 'border-[#D7E2EA] bg-[#D7E2EA] text-[#0C0C0C]' : 'border-[#D7E2EA]/60 text-[#D7E2EA] hover:bg-[#D7E2EA]/10'}`
   return (
     <main className="relative z-10 min-h-screen bg-[#0C0C0C] px-5 pb-20 pt-8 sm:px-8 sm:pb-24 md:px-10 md:pb-32 md:pt-12">
       <a href="/" onClick={goTo} className="press -mt-3 mb-7 inline-block py-3 text-sm font-medium uppercase tracking-wider text-[#D7E2EA] transition-opacity duration-200 hover:opacity-70">← Startseite</a>

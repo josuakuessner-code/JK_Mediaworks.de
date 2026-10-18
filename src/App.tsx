@@ -44,9 +44,9 @@ const DESCRIPTIONS: Record<Page, string> = {
   projekte: 'Alle Projekte von JK-Mediaworks: Volleyball, Motorsport, Hochzeiten und Media Days. Fotograf aus Wiesbaden.',
   projekt: 'Projekt von JK-Mediaworks, Fotograf aus Wiesbaden: alle Fotos in der Galerie.',
   kontakt: 'Unverbindliche Anfrage an JK-Mediaworks: Termin, Ort und Wünsche angeben und ein Angebot für deine Fotos erhalten.',
-  impressum: 'Impressum von JK-Mediaworks, Josua Küßner, Wiesbaden.',
-  datenschutz: 'Datenschutzerklärung von JK-Mediaworks.',
-  notfound: 'Diese Seite wurde nicht gefunden.',
+  impressum: 'Impressum und Anbieterkennzeichnung von JK-Mediaworks, Josua Küßner, Fotograf in Wiesbaden: Anschrift, E-Mail und Telefon.',
+  datenschutz: 'Datenschutzerklärung von JK-Mediaworks: welche Daten bei Besuch der Website und bei einer Anfrage verarbeitet werden und welche Rechte du hast.',
+  notfound: 'Diese Seite wurde nicht gefunden. Zur Startseite von JK-Mediaworks, Fotograf aus Wiesbaden, oder zu allen Projekten.',
 }
 
 const setMeta = (selector: string, attr: string, value: string) => document.head.querySelector(selector)?.setAttribute(attr, value)
