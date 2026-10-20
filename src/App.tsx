@@ -15,6 +15,7 @@ import NotFoundPage from './sections/NotFoundPage'
 import StickyCta from './components/StickyCta'
 import BackToTop from './components/BackToTop'
 import { PROJECTS } from './data/content'
+import { PROJECT_IMAGES } from './data/assets'
 
 const PAGES = ['projekte', 'kontakt', 'impressum', 'datenschutz'] as const
 type Page = 'home' | 'projekt' | 'notfound' | (typeof PAGES)[number]
@@ -58,6 +59,8 @@ if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'm
 
 export default function App() {
   const [page, setPage] = useState(route())
+  // Pfad mitführen: bei Zurück/Vor zwischen zwei Projekt-Adressen bleibt `page` gleich, der Pfad nicht
+  const [path, setPath] = useState(window.location.pathname)
   const firstRender = useRef(true)
   useEffect(() => {
     firstRender.current = false
@@ -79,6 +82,7 @@ export default function App() {
       clearTimeout(t)
       const y = (window.history.state as { scroll?: number } | null)?.scroll ?? 0
       setPage(route())
+      setPath(window.location.pathname)
       // nach dem Rendern der neuen Seite an die gemerkte Stelle (neue Seiten: oben)
       requestAnimationFrame(() => window.scrollTo(0, y))
     }
@@ -92,6 +96,7 @@ export default function App() {
   }, [])
 
   const pid = page === 'projekt' ? projectId() : ''
+  void path // löst bei Pfadwechsel innerhalb von 'projekt' ein neues Rendern aus
   useEffect(() => {
     const proj = PROJECTS.find((p) => p.id === pid)
     const title = proj ? `${proj.name} | JK-Mediaworks` : TITLES[page]
@@ -114,6 +119,31 @@ export default function App() {
       }
       robots.setAttribute('content', 'noindex')
     } else robots?.remove()
+  }, [page, pid])
+
+  // Strukturierte Daten (schema.org ImageGallery) pro Projekt für Suchmaschinen; wird beim Verlassen wieder entfernt
+  useEffect(() => {
+    const proj = PROJECTS.find((p) => p.id === pid)
+    if (page !== 'projekt' || !proj) return
+    const url = `https://jkmediaworks.com/projekt/${proj.id}`
+    const data = {
+      '@context': 'https://schema.org',
+      '@type': 'ImageGallery',
+      '@id': `${url}#gallery`,
+      name: proj.name,
+      description: `${proj.name}: ${proj.category}. Fotos von JK-Mediaworks, Fotograf aus Wiesbaden.`,
+      url,
+      inLanguage: 'de',
+      creator: { '@type': 'Person', name: 'Josua Küßner', url: 'https://jkmediaworks.com/' },
+      publisher: { '@id': 'https://jkmediaworks.com/#business' },
+      image: (PROJECT_IMAGES[proj.id] ?? []).slice(0, 12).map((src) => ({ '@type': 'ImageObject', contentUrl: new URL(src, window.location.origin).href, creator: { '@type': 'Person', name: 'Josua Küßner' } })),
+    }
+    const el = document.createElement('script')
+    el.type = 'application/ld+json'
+    el.id = 'ld-project'
+    el.textContent = JSON.stringify(data)
+    document.head.appendChild(el)
+    return () => el.remove()
   }, [page, pid])
 
   return (

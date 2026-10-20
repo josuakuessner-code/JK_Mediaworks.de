@@ -12,7 +12,11 @@ interface Env {
 
 const clean = (s: unknown, max = 200) => String(s ?? '').replace(/[\r\n]+/g, ' ').slice(0, max)
 const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } })
+  new Response(JSON.stringify(body), {
+    status,
+    // Antworten der Schnittstelle: nie cachen, nie als anderer Typ deuten, in keinem Frame einbettbar
+    headers: { 'content-type': 'application/json', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff', 'x-frame-options': 'DENY', 'referrer-policy': 'no-referrer' },
+  })
 
 async function verifyTurnstile(secret: string, token: string, ip: string | null) {
   if (!token) return false
@@ -141,6 +145,26 @@ export default {
       return request.method === 'POST' ? handleAnfrage(request, env) : json({ ok: false, error: 'method' }, 405)
     }
     const res = await env.ASSETS.fetch(request)
+    // Projektseiten: Titel, Beschreibung und Vorschaubild für Link-Vorschauen (WhatsApp, iMessage, Social Media) schon im HTML setzen,
+    // denn diese Dienste führen kein JavaScript aus und sähen sonst nur die Startseiten-Angaben.
+    const projectId = pathname.match(/^\/projekt\/([a-z0-9-]+)\/?$/)?.[1]
+    const project = projectId ? PROJECTS.find((p) => p.id === projectId) : undefined
+    if (project && request.method === 'GET' && (res.headers.get('content-type') ?? '').includes('text/html')) {
+      const title = `${project.name} | JK-Mediaworks`
+      const desc = `${project.name}: ${project.category}. Fotos von JK-Mediaworks, Fotograf aus Wiesbaden.`
+      const url = `https://jkmediaworks.com/projekt/${project.id}`
+      const image = `https://jkmediaworks.com/og/${project.id}.jpg`
+      return new HTMLRewriter()
+        .on('title', { element: (el) => void el.setInnerContent(title) })
+        .on('meta[name="description"]', { element: (el) => void el.setAttribute('content', desc) })
+        .on('meta[property="og:title"], meta[name="twitter:title"]', { element: (el) => void el.setAttribute('content', title) })
+        .on('meta[property="og:description"], meta[name="twitter:description"]', { element: (el) => void el.setAttribute('content', desc) })
+        .on('meta[property="og:image"], meta[name="twitter:image"]', { element: (el) => void el.setAttribute('content', image) })
+        .on('meta[property="og:image:alt"]', { element: (el) => void el.setAttribute('content', `${project.name}: ${project.category}`) })
+        .on('meta[property="og:url"]', { element: (el) => void el.setAttribute('content', url) })
+        .on('link[rel="canonical"]', { element: (el) => void el.setAttribute('href', url) })
+        .transform(res)
+    }
     // Unbekannte Seiten-Adressen (ohne Dateiendung) liefern die App weiter aus, aber mit Status 404 statt 200.
     const path = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname
     if (request.method === 'GET' && !/\.[a-z0-9]+$/i.test(path) && !PAGES.has(path) && !PROJECT_PATHS.has(path) && (res.headers.get('content-type') ?? '').includes('text/html')) {
