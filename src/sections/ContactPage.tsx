@@ -1,3 +1,4 @@
+import { BRAND_GRADIENT } from '../lib/brand'
 import { createContext, isValidElement, useContext, useEffect, useState, type FocusEvent, type FormEvent, type MouseEvent, type ReactNode } from 'react'
 import { Check, Download, Mail, MapPin } from 'lucide-react'
 import FadeIn from '../components/FadeIn'
@@ -71,7 +72,7 @@ const Chip = ({ active, onClick, children, type }: { active: boolean; onClick: (
     className={`press min-h-11 rounded-full border-2 px-5 py-2.5 text-sm font-medium uppercase tracking-wider transition-colors duration-200 ${
       active ? 'border-transparent text-white' : 'border-[#D7E2EA]/40 text-[#D7E2EA] hover:bg-[#D7E2EA]/10'
     }`}
-    style={active ? { background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #5D26B8 100%)' } : undefined}
+    style={active ? { background: BRAND_GRADIENT } : undefined}
   >
     {children}
   </button>
@@ -221,7 +222,7 @@ export default function ContactPage() {
           {done ? (
             <FadeIn y={30}>
               <div role="status" className="rounded-[32px] border-2 border-[#D7E2EA]/25 p-8 text-center sm:rounded-[40px] sm:p-12">
-                <span className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full" style={{ background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #5D26B8 100%)' }}>
+                <span className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full" style={{ background: BRAND_GRADIENT }}>
                   <Check size={30} aria-hidden />
                 </span>
                 {status === 'sent' ? (
@@ -333,7 +334,7 @@ export default function ContactPage() {
                   aria-disabled={!consent}
                   className="press inline-block rounded-full px-10 py-4 text-base font-medium uppercase tracking-widest text-white disabled:cursor-not-allowed disabled:opacity-50"
                   style={{
-                    background: 'linear-gradient(123deg, #18011F 7%, #B600A8 37%, #7621B0 72%, #5D26B8 100%)',
+                    background: BRAND_GRADIENT,
                     boxShadow: '0px 4px 4px rgba(181, 1, 167, 0.25), 4px 4px 12px #7721B1 inset',
                     outline: '2px solid white',
                     outlineOffset: '-3px',
