@@ -343,6 +343,7 @@ export default function ContactPage() {
                   {status === 'sending' ? 'Wird gesendet …' : 'Anfrage senden'}
                 </button>
                 {!consent && <p className="mt-3 text-sm font-light text-[#D7E2EA]/60">Bitte bestätige zuerst die Datenschutzerklärung, dann kannst du die Anfrage senden.</p>}
+                <p className="mt-3 text-sm font-light text-[#D7E2EA]/60">Ich antworte in der Regel innerhalb von 1 bis 2 Werktagen.</p>
               </FadeIn>
             </form>
             </FieldErrors.Provider>
