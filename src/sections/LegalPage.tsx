@@ -9,6 +9,7 @@ function Impressum() {
       <p className="mb-6 text-sm text-[#D7E2EA]/60">Angaben gemäß § 5 DDG.</p>
       <h2>Anbieter</h2>
       <p>Josua Küßner<br />JK-Mediaworks<br />Freesienweg 27<br />65201 Wiesbaden</p>
+      <p>Tätigkeit: Fotografie (Gewerbe angemeldet bei der Landeshauptstadt Wiesbaden)</p>
       <h2>Kontakt</h2>
       <p>E-Mail: <a href={`mailto:${SITE.email}`} onClick={openMail} className="inline-block py-2">{SITE.email}</a><br />Telefon: <a href="tel:+4917642487640" className="inline-block py-2">+49 176 42487640</a></p>
       <h2>Umsatzsteuer</h2>
