@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type PointerEvent } from 'react'
 import FadeIn from '../components/FadeIn'
 import LiveProjectButton from '../components/LiveProjectButton'
 import { goTo } from '../lib/links'
@@ -21,6 +21,25 @@ function pick() {
 }
 const OFFSET = ['lg:mt-0', 'lg:mt-14', 'lg:mt-4', 'lg:mt-20', 'lg:mt-8']
 
+// Kippen nur mit Maus (nicht auf Touch) und nur ohne „Bewegung reduzieren“
+const canTilt = () => window.matchMedia('(hover: hover) and (pointer: fine)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+function tilt(e: PointerEvent<HTMLAnchorElement>) {
+  if (e.pointerType !== 'mouse' || !canTilt()) return
+  const el = e.currentTarget
+  const r = el.getBoundingClientRect()
+  const px = (e.clientX - r.left) / r.width
+  const py = (e.clientY - r.top) / r.height
+  el.style.setProperty('--rx', `${((0.5 - py) * 10).toFixed(2)}deg`)
+  el.style.setProperty('--ry', `${((px - 0.5) * 12).toFixed(2)}deg`)
+  el.dataset.tilt = ''
+}
+function untilt(e: PointerEvent<HTMLAnchorElement>) {
+  const el = e.currentTarget
+  el.style.setProperty('--rx', '0deg')
+  el.style.setProperty('--ry', '0deg')
+  delete el.dataset.tilt
+}
+
 export default function ProjectsTeaser() {
   const [items] = useState(pick)
   return (
@@ -35,8 +54,22 @@ export default function ProjectsTeaser() {
           {items.map(({ project, src }, i) => (
             <li key={project.id} className={`w-[62%] shrink-0 snap-center sm:w-[40%] lg:w-auto ${OFFSET[i]}`}>
               <FadeIn y={30} delay={i * 0.06}>
-                <a href={`/projekt/${project.id}`} onClick={goTo} aria-label={`Projekt ansehen: ${project.name}`} className="press group block overflow-hidden rounded-3xl md:rounded-[36px]">
-                  <img src={thumb(src)} width={600} height={750} alt={`${project.category}: ${project.name}`} loading="lazy" className="aspect-[4/5] w-full bg-[#161616] object-cover zoom group-hover:scale-[1.04]" />
+                <a
+                  href={`/projekt/${project.id}`}
+                  onClick={goTo}
+                  onPointerMove={tilt}
+                  onPointerLeave={untilt}
+                  aria-label={`Projekt ansehen: ${project.name}`}
+                  className="ticket press group relative flex aspect-[3/4.6] flex-col overflow-hidden rounded-3xl bg-[#161616] md:rounded-[32px]"
+                >
+                  <span className="ticket-photo relative block overflow-hidden">
+                    <img src={thumb(src)} width={600} height={750} alt={`${project.category}: ${project.name}`} loading="lazy" className="h-full w-full bg-[#161616] object-cover zoom group-hover:scale-[1.04]" />
+                  </span>
+                  <span className="ticket-perf absolute inset-x-4 border-t-2 border-dashed border-[#D7E2EA]/20" aria-hidden="true" />
+                  <span className="flex min-h-0 flex-1 items-center justify-between gap-2 px-4 text-[0.62rem] font-medium uppercase tracking-[0.14em] sm:text-[0.68rem]">
+                    <span className="min-w-0 truncate text-[#D7E2EA]/55">{project.group}</span>
+                    <span className="ticket-go shrink-0">Ansehen →</span>
+                  </span>
                 </a>
               </FadeIn>
             </li>

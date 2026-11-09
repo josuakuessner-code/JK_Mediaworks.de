@@ -3,6 +3,7 @@ import Magnet from '../components/Magnet'
 import Navbar from '../components/Navbar'
 import ContactButton from '../components/ContactButton'
 import { HERO_PORTRAIT } from '../data/assets'
+import ScrambleText from '../components/ScrambleText'
 import { SITE } from '../data/content'
 
 export default function HeroSection() {
@@ -16,7 +17,7 @@ export default function HeroSection() {
       <FadeIn y={40} delay={0.15} className="flex min-h-0 flex-1 flex-col">
         <div className="hero-zone flex min-h-0 w-full flex-1 items-center overflow-hidden">
           <h1 className="hero-heading w-full whitespace-nowrap text-center text-[8.5vw] font-black uppercase leading-none tracking-tight sm:text-[9.5vw] md:text-[10.5vw] lg:text-[11vw]">
-            Hi, ich bin {SITE.name}
+            <ScrambleText text={`Hi, ich bin ${SITE.name}`} delay={0.25} />
           </h1>
         </div>
       </FadeIn>

@@ -3,6 +3,7 @@ import { createContext, isValidElement, useContext, useEffect, useState, type Fo
 import { Check, Download, Mail, MapPin } from 'lucide-react'
 import FadeIn from '../components/FadeIn'
 import CopyEmail from '../components/CopyEmail'
+import Receipt from '../components/Receipt'
 import { SERVICES, SITE } from '../data/content'
 import type { Anfrage } from '../lib/anfrage'
 import { downloadBlob, goTo, openMail } from '../lib/links'
@@ -222,9 +223,13 @@ export default function ContactPage() {
           {done ? (
             <FadeIn y={30}>
               <div role="status" className="rounded-[32px] border-2 border-[#D7E2EA]/25 p-8 text-center sm:rounded-[40px] sm:p-12">
-                <span className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full" style={{ background: BRAND_GRADIENT }}>
-                  <Check size={30} aria-hidden />
-                </span>
+                {status === 'sent' ? (
+                  <Receipt data={sentData} />
+                ) : (
+                  <span className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full" style={{ background: BRAND_GRADIENT }}>
+                    <Check size={30} aria-hidden />
+                  </span>
+                )}
                 {status === 'sent' ? (
                   <>
                     <h2 className="hero-heading mb-3 text-3xl font-black uppercase sm:text-4xl">Anfrage gesendet</h2>
