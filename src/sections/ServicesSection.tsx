@@ -1,5 +1,8 @@
 import FadeIn from '../components/FadeIn'
 import { SERVICES } from '../data/content'
+import { goTo } from '../lib/links'
+
+const PAGE_LINKS: Record<string, string> = { Sportfotografie: '/sportfotografie', Hochzeiten: '/hochzeitsfotografie' }
 
 export default function LeistungenSection() {
   return (
@@ -19,6 +22,7 @@ export default function LeistungenSection() {
               <div className="flex flex-col gap-3 text-[#0C0C0C]">
                 <h3 className="font-medium uppercase" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>{s.name}</h3>
                 <p className="max-w-2xl font-light leading-relaxed text-[#0C0C0C]/75" style={{ fontSize: 'clamp(0.85rem, 1.6vw, 1.25rem)' }}>{s.text}</p>
+                {PAGE_LINKS[s.name] && <a href={PAGE_LINKS[s.name]} onClick={goTo} className="press inline-block py-2 text-sm font-medium uppercase tracking-wider underline underline-offset-4">Mehr zu {s.name === 'Hochzeiten' ? 'Hochzeitsfotografie' : s.name} →</a>}
               </div>
             </div>
           </FadeIn>

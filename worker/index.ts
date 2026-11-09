@@ -135,7 +135,7 @@ async function handleAnfrage(request: Request, env: Env) {
   return json({ ok: false, error: 'mail-failed' }, 502)
 }
 
-const PAGES = new Set(['/', '/projekte', '/kontakt', '/impressum', '/datenschutz'])
+const PAGES = new Set(['/', '/projekte', '/kontakt', '/impressum', '/datenschutz', '/sportfotografie', '/hochzeitsfotografie'])
 const PROJECT_PATHS = new Set(PROJECTS.map((p) => `/projekt/${p.id}`))
 
 export default {
