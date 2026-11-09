@@ -11,13 +11,14 @@ import ContactSection from './sections/ContactSection'
 import LegalPage from './sections/LegalPage'
 import ContactPage from './sections/ContactPage'
 import ProjectPage from './sections/ProjectPage'
+import LeistungPage from './sections/LeistungPage'
 import NotFoundPage from './sections/NotFoundPage'
 import StickyCta from './components/StickyCta'
 import BackToTop from './components/BackToTop'
-import { PROJECTS } from './data/content'
+import { LEISTUNGSSEITEN, PROJECTS, type LeistungSlug } from './data/content'
 import { PROJECT_IMAGES } from './data/assets'
 
-const PAGES = ['projekte', 'kontakt', 'impressum', 'datenschutz'] as const
+const PAGES = ['projekte', 'kontakt', 'impressum', 'datenschutz', 'sportfotografie', 'hochzeitsfotografie'] as const
 type Page = 'home' | 'projekt' | 'notfound' | (typeof PAGES)[number]
 
 const segments = () => window.location.pathname.replace(/^\/+|\/+$/g, '').toLowerCase().split('/')
@@ -37,6 +38,8 @@ const TITLES: Record<Page, string> = {
   kontakt: 'Anfrage | JK-Mediaworks',
   impressum: 'Impressum | JK-Mediaworks',
   datenschutz: 'Datenschutz | JK-Mediaworks',
+  sportfotografie: LEISTUNGSSEITEN.sportfotografie.title,
+  hochzeitsfotografie: LEISTUNGSSEITEN.hochzeitsfotografie.title,
 }
 
 // Alte Links (#/kontakt) einmalig auf echte Pfade umschreiben.
@@ -47,6 +50,8 @@ const DESCRIPTIONS: Record<Page, string> = {
   kontakt: 'Unverbindliche Anfrage an JK-Mediaworks: Termin, Ort und Wünsche angeben und ein Angebot für deine Fotos erhalten.',
   impressum: 'Impressum und Anbieterkennzeichnung von JK-Mediaworks, Josua Küßner, Fotograf in Wiesbaden: Anschrift, E-Mail und Telefon.',
   datenschutz: 'Datenschutzerklärung von JK-Mediaworks: welche Daten bei Besuch der Website und bei einer Anfrage verarbeitet werden und welche Rechte du hast.',
+  sportfotografie: LEISTUNGSSEITEN.sportfotografie.description,
+  hochzeitsfotografie: LEISTUNGSSEITEN.hochzeitsfotografie.description,
   notfound: 'Diese Seite wurde nicht gefunden. Zur Startseite von JK-Mediaworks, Fotograf aus Wiesbaden, oder zu allen Projekten.',
 }
 
@@ -170,6 +175,8 @@ export default function App() {
           <NotFoundPage />
         ) : page === 'projekt' ? (
           <ProjectPage key={pid} id={pid} />
+        ) : page === 'sportfotografie' || page === 'hochzeitsfotografie' ? (
+          <LeistungPage slug={page as LeistungSlug} />
         ) : page === 'projekte' ? (
           <ProjectsSection />
         ) : page === 'kontakt' ? (
@@ -178,8 +185,8 @@ export default function App() {
           <LegalPage page={page} />
         )}
         </motion.div>
-        {(page === 'home' || page === 'projekt' || page === 'projekte') && <StickyCta />}
-        {(page === 'home' || page === 'projekt' || page === 'projekte') && <BackToTop />}
+        {(page === 'home' || page === 'projekt' || page === 'projekte' || page === 'sportfotografie' || page === 'hochzeitsfotografie') && <StickyCta />}
+        {(page === 'home' || page === 'projekt' || page === 'projekte' || page === 'sportfotografie' || page === 'hochzeitsfotografie') && <BackToTop />}
       </div>
     </MotionConfig>
   )

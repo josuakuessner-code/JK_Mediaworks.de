@@ -37,3 +37,60 @@ export const PROJECTS: { id: string; group: Category; category: string; name: st
   { id: 'media-day-eintracht', group: 'Media Days', category: 'Media Day · Volleyball', name: 'Eintracht Wiesbaden' },
   { id: 'media-day-jugend', group: 'Media Days', category: 'Media Day · Volleyball', name: 'Jugendnationalmannschaft' },
 ]
+
+// Eigene Leistungsseiten (Pfad /<slug>): Texte für Suchmaschinen und Kunden. Projekte werden über ihre IDs aus PROJECTS verlinkt.
+export const LEISTUNGSSEITEN = {
+  sportfotografie: {
+    slug: 'sportfotografie',
+    label: 'Sportfotografie',
+    title: 'Sportfotografie Wiesbaden | JK-Mediaworks',
+    description: 'Sportfotograf in Wiesbaden: Spielfotos, Highlights und Media Days für Vereine, Verbände und Teams. Schnelle Lieferung nach Absprache. Jetzt unverbindlich anfragen.',
+    h1: 'Sportfotografie in Wiesbaden',
+    intro: 'Tempo, Emotion und die entscheidenden Sekunden: Ich halte Spiele, Turniere und Media Days so fest, dass Verein, Presse und Social Media sofort etwas damit anfangen können.',
+    sections: [
+      {
+        heading: 'Für wen ich fotografiere',
+        text: 'Für Vereine, Verbände und Teams aus Wiesbaden, Rhein-Main und darüber hinaus: vom Nachwuchsturnier über Bundesliga-Spiele bis zu Länderspielen. Mein Schwerpunkt liegt im Volleyball, ich fotografiere außerdem Motorsport und freue mich auf weitere Sportarten wie Handball, Fußball oder Tischtennis.',
+      },
+      {
+        heading: 'Was du bekommst',
+        text: 'Eine sorgfältige Auswahl der besten Momente, einheitlich bearbeitet in einem klaren Look und in hoher Auflösung. Auf Wunsch auch fertig zugeschnitten für Instagram, Website oder Pressemitteilung.',
+      },
+      {
+        heading: 'Lieferung',
+        text: 'Die Bildlieferung richtet sich nach deinem Bedarf: schon während des Events, am selben Abend oder zu dem Zeitpunkt, den ihr braucht. Sprich mich einfach vorher an.',
+      },
+    ],
+    projects: ['barock-volleys', 'dvv-pokalfinale', 'u18-em-quali', 'vc-wiesbaden', 'fk-performance-24h', 'media-day-eintracht'],
+    cta: 'Du planst ein Spiel, Turnier oder einen Media Day? Erzähl mir davon.',
+  },
+  hochzeitsfotografie: {
+    slug: 'hochzeitsfotografie',
+    label: 'Hochzeitsfotografie',
+    title: 'Hochzeitsfotograf Wiesbaden | JK-Mediaworks',
+    description: 'Hochzeitsfotograf aus Wiesbaden: natürliche, emotionale Hochzeitsreportagen in Rhein-Main, Deutschland und im Ausland. Jetzt unverbindlich anfragen.',
+    h1: 'Hochzeitsfotografie in Wiesbaden und Rhein-Main',
+    intro: 'Natürliche, emotionale Bilder, die deinen Tag so erzählen, wie er sich angefühlt hat: vom ersten Blick bis zum letzten Tanz.',
+    sections: [
+      {
+        heading: 'Reportage statt Posing',
+        text: 'Ich begleite euren Tag aufmerksam im Hintergrund und halte echte Momente fest: Blicke, Lachen, Tränen und alles dazwischen. Gestellte Bilder gibt es dort, wo ihr sie wollt, in entspannter Atmosphäre.',
+      },
+      {
+        heading: 'Look und Bearbeitung',
+        text: 'Meine Bilder bekommen einen besonderen Look mit dem Charme alter Filme. Jedes Foto wird sorgfältig ausgewählt und einheitlich bearbeitet, damit das Album als Ganzes wirkt.',
+      },
+      {
+        heading: 'Wo ich fotografiere',
+        text: 'In Wiesbaden, Mainz und im Rhein-Main-Gebiet, aber auch weiter weg: Meine Hochzeitsreportagen entstanden unter anderem in der Toscana und in Schweden.',
+      },
+      {
+        heading: 'Preise und Ablauf',
+        text: 'Jede Hochzeit ist anders. Deshalb gibt es ein individuelles Angebot nach Zeit und Aufwand. Schreib mir Datum, Ort und deine Wünsche, dann melde ich mich bei dir.',
+      },
+    ],
+    projects: ['hochzeit-toscana', 'hochzeit-schweden', 'hochzeit-alina-ben'],
+    cta: 'Ihr plant eure Hochzeit? Erzählt mir von eurem Tag.',
+  },
+} as const
+export type LeistungSlug = keyof typeof LEISTUNGSSEITEN
