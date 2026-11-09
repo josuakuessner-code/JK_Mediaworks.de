@@ -1,59 +1,9 @@
-import { useRef, useState } from 'react'
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion'
-import Lightbox from '../components/Lightbox'
+import { useState } from 'react'
 import FadeIn from '../components/FadeIn'
-import LiveProjectButton from '../components/LiveProjectButton'
+import ProjectTicket from '../components/ProjectTicket'
 import { goTo } from '../lib/links'
-import { PROJECT_IMAGES, thumb } from '../data/assets'
+import { PROJECT_IMAGES } from '../data/assets'
 import { CATEGORIES, PROJECTS, type Category } from '../data/content'
-
-const R = 'rounded-[40px] sm:rounded-[50px] md:rounded-[60px]'
-
-type Project = (typeof PROJECTS)[number]
-
-const gridCols = (n: number) => (n === 4 ? 'grid-cols-2 sm:grid-cols-4' : n >= 6 ? 'grid-cols-3 sm:grid-cols-6' : 'grid-cols-3')
-
-function Card({ p, index, total }: { p: Project; index: number; total: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const reduce = useReducedMotion()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'start start'] })
-  const targetScale = 1 - (total - 1 - index) * 0.03
-  const scale = useTransform(scrollYProgress, [0, 1], [1, targetScale])
-  const all = PROJECT_IMAGES[p.id] ?? []
-  const imgs = all.slice(0, 4)
-  const [open, setOpen] = useState<number | null>(null)
-  const items = imgs.map((src, i) => ({ src, alt: `${p.category}: ${p.name}, Aufnahme ${i + 1} von ${imgs.length}` }))
-
-  return (
-    <div ref={ref} className={index === total - 1 ? "" : "h-[85vh]"}>
-      <motion.article
-        className={`sticky origin-top border-2 border-[#D7E2EA] bg-[#0C0C0C] p-4 [--base:6rem] sm:p-6 md:[--base:8rem] md:p-8 ${R}`}
-        style={{ top: `calc(var(--base) + ${index * 28}px)`, scale: reduce ? 1 : scale }}
-      >
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-4 sm:mb-6">
-          <div className="flex items-center gap-4 sm:gap-8">
-            <span className="hero-heading font-black leading-none" style={{ fontSize: 'clamp(3rem, 10vw, 140px)' }}>
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <div className="flex flex-col">
-              <span className="font-light uppercase tracking-widest text-[#D7E2EA]/70" style={{ fontSize: 'clamp(0.75rem, 1.2vw, 1rem)' }}>{p.category}</span>
-              <h2 className="font-medium uppercase text-[#D7E2EA]" style={{ fontSize: 'clamp(1rem, 2.2vw, 2.1rem)' }}>{p.name}</h2>
-            </div>
-          </div>
-          <LiveProjectButton href={`/projekt/${p.id}`} label="Zum Projekt" />
-        </div>
-        <div className={`grid gap-3 sm:gap-4 ${gridCols(imgs.length)}`}>
-          {imgs.map((src, i) => (
-            <button key={src} type="button" onClick={() => setOpen(i)} aria-label={`Bild vergrößern: ${items[i].alt}`} className="press block cursor-zoom-in overflow-hidden rounded-2xl sm:rounded-3xl md:rounded-[36px]">
-              <img src={thumb(src)} alt={items[i].alt} loading={index === 0 ? 'eager' : 'lazy'} width={600} height={750} className="aspect-[4/5] w-full bg-[#161616] object-cover zoom hover:scale-[1.03]" />
-            </button>
-          ))}
-        </div>
-      </motion.article>
-      {open !== null && <Lightbox images={items} index={open} onIndex={setOpen} onClose={() => setOpen(null)} />}
-    </div>
-  )
-}
 
 export default function ProjectsSection() {
   const [filter, setFilter] = useState<Category | 'Alle'>('Alle')
@@ -75,11 +25,18 @@ export default function ProjectsSection() {
           </button>
         ))}
       </div>
-      <div className="mx-auto max-w-7xl">
-        {list.map((p, i) => (
-          <Card key={p.id} p={p} index={i} total={list.length} />
-        ))}
-      </div>
+      <ul className="mx-auto grid max-w-7xl grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-8 lg:grid-cols-3" aria-label="Alle Projekte">
+        {list.map((p, i) => {
+          const src = (PROJECT_IMAGES[p.id] ?? [])[0]
+          return src ? (
+            <li key={p.id}>
+              <FadeIn y={30} delay={(i % 3) * 0.06}>
+                <ProjectTicket project={p} src={src} label={p.category} eager={i < 3} showName />
+              </FadeIn>
+            </li>
+          ) : null
+        })}
+      </ul>
     </main>
   )
 }
