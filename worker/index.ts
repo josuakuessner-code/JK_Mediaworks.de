@@ -1,6 +1,6 @@
 // Cloudflare Worker: liefert die Website (dist) aus und nimmt unter /api/anfrage die Anfrage samt PDF entgegen,
 // um sie per Resend an dein Postfach zu schicken. Einrichtung: README.md, Abschnitt "Anfrageformular".
-import { PROJECTS } from '../src/data/content'
+import { ANLAESSE, PROJECTS } from '../src/data/content'
 
 interface Env {
   ASSETS: { fetch: (r: Request) => Promise<Response> }
@@ -95,13 +95,15 @@ async function handleAnfrage(request: Request, env: Env) {
   if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || !pdf.startsWith('JVBERi0') || pdf.length > 4_000_000 || !/^[A-Za-z0-9+/=]+$/.test(pdf)) {
     return json({ ok: false, error: 'invalid' }, 400)
   }
+  // Anlass nur aus der festen Liste: der Wert steht in Betreff und Bestätigungsmail, freier Text könnte dort für Spam an fremde Adressen missbraucht werden.
+  const anlass = ANLAESSE.includes(String(d.anlass)) ? String(d.anlass) : 'Sonstiges'
   const lines = [
     `Name: ${name}`,
     `E-Mail: ${email}`,
     `Telefon: ${clean(d.phone)}`,
     `Firma: ${clean(d.firma)}`,
     `Adresse: ${clean(d.adresse)}`,
-    `Anlass: ${clean(d.anlass)}`,
+    `Anlass: ${anlass}`,
     `Titel: ${clean(d.titel, 160)}`,
     `Datum: ${clean(d.datum)}${d.datumBis ? ` bis ${clean(d.datumBis)}` : ''}`,
     `Ort: ${clean(d.ort)}`,
@@ -123,13 +125,13 @@ async function handleAnfrage(request: Request, env: Env) {
       from: env.MAIL_FROM || 'JK-Mediaworks Website <onboarding@resend.dev>',
       to: [env.MAIL_TO],
       reply_to: email,
-      subject: `Neue Anfrage: ${clean(d.anlass, 60)} von ${name}`,
+      subject: `Neue Anfrage: ${anlass} von ${clean(name, 60)}`,
       text: lines.join('\n'),
       attachments: [{ filename: 'Anfrage.pdf', content: pdf }],
     }),
   })
   if (res.ok) {
-    await sendConfirmation(env, email, clean(name, 60), clean(d.anlass, 60), clean(d.firma, 60))
+    await sendConfirmation(env, email, clean(name, 60), anlass, clean(d.firma, 60))
     return json({ ok: true })
   }
   return json({ ok: false, error: 'mail-failed' }, 502)

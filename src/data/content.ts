@@ -17,6 +17,9 @@ export const SERVICES = [
   { name: 'Bildbearbeitung', text: 'Sorgfältige Auswahl, Retusche und ein einheitlicher Look, geliefert in hoher Auflösung und in den Formaten, die du brauchst.' },
 ]
 
+// Anlässe im Anfrageformular. Der Server (worker) nimmt nur diese Werte an.
+export const ANLAESSE = [...SERVICES.flatMap((s) => (s.name === 'Konzerte & Events' ? ['Konzerte', 'Events'] : [s.name])), 'Sonstiges']
+
 // Reihenfolge bewusst gemischt (Sport, Hochzeit, Motorsport …), damit auf /projekte nie zwei gleiche Themen direkt aufeinander folgen.
 // Struktur wie im Foto-Ordner: Kategorie > Job. Neue Jobs hier eintragen und Bilder in assets.ts zuordnen.
 export const CATEGORIES = ['Sport', 'Motorsport', 'Hochzeiten', 'Media Days'] as const

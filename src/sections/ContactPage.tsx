@@ -4,7 +4,7 @@ import { Check, Download, Mail, MapPin } from 'lucide-react'
 import FadeIn from '../components/FadeIn'
 import CopyEmail from '../components/CopyEmail'
 import Receipt from '../components/Receipt'
-import { SERVICES, SITE } from '../data/content'
+import { ANLAESSE, SITE } from '../data/content'
 import type { Anfrage } from '../lib/anfrage'
 import { downloadBlob, goTo, openMail } from '../lib/links'
 import { mailtoHref } from '../lib/mailtext'
@@ -13,7 +13,6 @@ import { mailtoHref } from '../lib/mailtext'
 const TURNSTILE_KEY = (import.meta.env.VITE_TURNSTILE_SITEKEY as string | undefined) || '0x4AAAAAAFNuZfcdyKg_flC1'
 
 const ENDPOINT = import.meta.env.VITE_FORM_ENDPOINT || '/api/anfrage'
-const ANLAESSE = [...SERVICES.flatMap((s) => (s.name === 'Konzerte & Events' ? ['Konzerte', 'Events'] : [s.name])), 'Sonstiges']
 const FORMATE = [
   '16:9 Querformat',
   '3:2 Querformat (Original)',
