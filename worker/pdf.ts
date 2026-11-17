@@ -1,9 +1,14 @@
-// Anfrage-PDF im Worker, ohne Bibliothek. Gleicher Aufbau und gleiche Farben wie src/lib/anfrage.ts (jsPDF im Browser),
-// damit die Bestätigungsmail ein PDF bekommt, das der Server selbst aus den geprüften Angaben baut (kein fremdes PDF an fremde Adressen).
+// Anfrage-PDF im Worker, ohne Bibliothek. Design nach Zentrale-PDF-Design.md (Kopfkarte mit Verlauf und JK-Logo, Rand 14 mm, Helvetica),
+// gleicher Aufbau wie src/lib/anfrage.ts (jsPDF im Browser). Die Bestätigungsmail bekommt so ein PDF, das der Server selbst
+// aus den geprüften Angaben baut (kein fremdes PDF an fremde Adressen).
+import { LOGO } from './logo'
+
 const K = 72 / 25.4 // mm -> pt
 const W = 210
 const H = 297
-const M = 20
+const M = 14
+// Verlauf der Kopfkarte (PL_HEAD_STOPS aus der Zentrale)
+const HEAD_STOPS: [number, number[]][] = [[0, [32, 1, 38]], [0.12, [84, 1, 84]], [0.35, [172, 0, 159]], [0.5, [155, 14, 171]], [0.75, [108, 33, 180]], [1, [89, 34, 188]]]
 
 // Zeichen in WinAnsi (1 Byte) umsetzen; alles andere wird zu "?"
 const WIN: Record<string, number> = { '€': 128, '‚': 130, '„': 132, '…': 133, '–': 150, '—': 151, '‘': 145, '’': 146, '“': 147, '”': 148, '•': 149 }
@@ -67,16 +72,28 @@ export function buildAnfragePdf(a: PdfAnfrage, brand: string, now = new Date()) 
   }
 
   newPage()
-  ops.push(`${rgb(12, 12, 12)} rg 0 ${((H - 42) * K).toFixed(2)} ${(W * K).toFixed(2)} ${(42 * K).toFixed(2)} re f`)
-  text(M, 20, 'F2', 22, rgb(215, 226, 234), brand.toUpperCase())
-  text(M, 28, 'F1', 10, rgb(215, 226, 234), 'Anfrage / Angebotsanfrage Fotografie')
-  text(M, 34, 'F1', 10, rgb(215, 226, 234), `Referenz ${ref}  |  ${t.day}.${t.month}.${t.year}`)
+  // Kopfkarte: x=14, y=8, 182 x 24 mm, Radius 5 mm, Verlauf leicht diagonal (wie plHeader in der Zentrale)
+  const cx = M * K, cw = (W - 2 * M) * K, ch = 24 * K, top = (H - 8) * K, rad = 5 * K, kk = 0.5523 * rad
+  const bottom = top - ch, right = cx + cw
+  const f = (n: number) => n.toFixed(2)
+  ops.push(
+    [
+      'q',
+      `${f(cx + rad)} ${f(top)} m ${f(right - rad)} ${f(top)} l ${f(right - rad + kk)} ${f(top)} ${f(right)} ${f(top - rad + kk)} ${f(right)} ${f(top - rad)} c`,
+      `${f(right)} ${f(bottom + rad)} l ${f(right)} ${f(bottom + rad - kk)} ${f(right - rad + kk)} ${f(bottom)} ${f(right - rad)} ${f(bottom)} c`,
+      `${f(cx + rad)} ${f(bottom)} l ${f(cx + rad - kk)} ${f(bottom)} ${f(cx)} ${f(bottom + rad - kk)} ${f(cx)} ${f(bottom + rad)} c`,
+      `${f(cx)} ${f(top - rad)} l ${f(cx)} ${f(top - rad + kk)} ${f(cx + rad - kk)} ${f(top)} ${f(cx + rad)} ${f(top)} c h W n /Sh1 sh Q`,
+      `q ${f(14 * K)} 0 0 ${f(14 * K)} ${f((M + 5) * K)} ${f((H - 8 - 5 - 14) * K)} cm /Logo Do Q`,
+    ].join('\n'),
+  )
+  text(M + 25, 8 + 11, 'F2', 17, '1 1 1', 'Anfrage')
+  text(M + 25, 8 + 17.5, 'F1', 9, rgb(245, 232, 250), `Angebotsanfrage Fotografie  ·  Referenz ${ref}  ·  ${t.day}.${t.month}.${t.year}`)
 
-  let y = 58
+  let y = 46
   const ensure = (h: number) => {
-    if (y + h > 280) {
+    if (y + h > 276) {
       newPage()
-      y = 24
+      y = 20
     }
   }
   const section = (title: string) => {
@@ -117,8 +134,12 @@ export function buildAnfragePdf(a: PdfAnfrage, brand: string, now = new Date()) 
   row('Budget', a.budget)
   row('Nachricht', a.nachricht)
 
-  ops = pages[pages.length - 1]
-  text(M, 288, 'F1', 8, rgb(120, 120, 120), `Automatisch erstellt über die Website von ${brand}. Unverbindliche Anfrage, kein Vertrag.`)
+  // Fußzeile auf jeder Seite, y=285, 8 pt grau
+  pages.forEach((p, i) => {
+    ops = p
+    text(M, 285, 'F1', 8, rgb(120, 120, 120), `Automatisch erstellt über die Website von ${brand}. Unverbindliche Anfrage, kein Vertrag.`)
+    if (pages.length > 1) text(W - M - 14, 285, 'F1', 8, rgb(120, 120, 120), `Seite ${i + 1}/${pages.length}`)
+  })
 
   // PDF zusammensetzen (alle Zeichen < 256, also 1 Byte je Zeichen)
   const objs: (string | null)[] = []
@@ -127,7 +148,17 @@ export function buildAnfragePdf(a: PdfAnfrage, brand: string, now = new Date()) 
   const pagesId = add(null)
   const f1 = add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>')
   const f2 = add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>')
-  const res = `<< /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >>`
+  // Verlauf als PDF-Shading: Richtung wie createLinearGradient(0, 0, w, h * 0.45), Farbstopps über eine Stitching-Funktion
+  const c3 = (c: number[]) => c.map((v) => (v / 255).toFixed(3)).join(' ')
+  const parts = HEAD_STOPS.slice(1).map(([, col], i) => `<< /FunctionType 2 /Domain [0 1] /C0 [${c3(HEAD_STOPS[i][1])}] /C1 [${c3(col)}] /N 1 >>`)
+  const shading = add(
+    `<< /ShadingType 2 /ColorSpace /DeviceRGB /Coords [${f(cx)} ${f(top)} ${f(right)} ${f(top - ch * 0.45)}] /Extend [true true] /Function << /FunctionType 3 /Domain [0 1] /Functions [${parts.join(' ')}] /Bounds [${HEAD_STOPS.slice(1, -1).map(([t]) => t).join(' ')}] /Encode [${parts.map(() => '0 1').join(' ')}] >> >>`,
+  )
+  const alpha = atob(LOGO.alpha)
+  const pix = atob(LOGO.rgb)
+  const smask = add(`<< /Type /XObject /Subtype /Image /Width ${LOGO.w} /Height ${LOGO.h} /ColorSpace /DeviceGray /BitsPerComponent 8 /Filter /FlateDecode /Length ${alpha.length} >>\nstream\n${alpha}\nendstream`)
+  const logo = add(`<< /Type /XObject /Subtype /Image /Width ${LOGO.w} /Height ${LOGO.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /SMask ${smask} 0 R /Length ${pix.length} >>\nstream\n${pix}\nendstream`)
+  const res = `<< /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> /Shading << /Sh1 ${shading} 0 R >> /XObject << /Logo ${logo} 0 R >> >>`
   const kids = pages.map((p) => {
     const stream = p.join('\n')
     const c = add(`<< /Length ${stream.length} >>\nstream\n${stream}\nendstream`)
