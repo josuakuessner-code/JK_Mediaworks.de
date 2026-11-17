@@ -45,9 +45,9 @@ function plHeadBg(wMm: number, hMm: number) {
 function plHeader(doc: jsPDF, W: number, kicker: string, title: string, sub: string, x = 14) {
   const cw = W - 2 * x, ch = 24, y0 = 8, bg = plHeadBg(cw, ch)
   let ok = false
-  if (bg) { try { doc.addImage(bg, 'PNG', x, y0, cw, ch); ok = true } catch { /* Ersatz unten */ } }
+  if (bg) { try { doc.addImage(bg, 'PNG', x, y0, cw, ch, undefined, 'FAST'); ok = true } catch { /* Ersatz unten */ } }
   if (!ok) { doc.setFillColor(108, 33, 180); doc.roundedRect(x, y0, cw, ch, 5, 5, 'F') }
-  try { doc.addImage('data:image/png;base64,' + PL_LOGO_B64, 'PNG', x + 5, y0 + 5, 14, 14) } catch { /* ohne Logo weiter */ }
+  try { doc.addImage('data:image/png;base64,' + PL_LOGO_B64, 'PNG', x + 5, y0 + 5, 14, 14, undefined, 'FAST') } catch { /* ohne Logo weiter */ }
   const tx = x + 25, tw = cw - 25 - 6, lead = kicker ? kicker + '  ·  ' : ''
   doc.setTextColor(255, 255, 255); doc.setFont('helvetica', 'bold'); doc.setFontSize(17)
   doc.text((doc.splitTextToSize(title || 'Ohne Titel', tw) as string[])[0], tx, y0 + (sub || lead ? 11 : 14.2))
@@ -61,7 +61,7 @@ const de = (iso: string) => (iso ? new Date(iso + 'T12:00:00').toLocaleDateStrin
 
 /** Baut die Anfrage als PDF (läuft komplett im Browser, nichts wird vorher an Dritte gesendet). */
 export function buildAnfragePdf(a: Anfrage) {
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' })
+  const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true })
   const W = 210
   const M = 14
   const now = new Date()
