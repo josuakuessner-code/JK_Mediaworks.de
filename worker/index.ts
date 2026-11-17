@@ -1,6 +1,7 @@
 // Cloudflare Worker: liefert die Website (dist) aus und nimmt unter /api/anfrage die Anfrage samt PDF entgegen,
 // um sie per Resend an dein Postfach zu schicken. Einrichtung: README.md, Abschnitt "Anfrageformular".
-import { ANLAESSE, PROJECTS } from '../src/data/content'
+import { ANLAESSE, PROJECTS, SITE } from '../src/data/content'
+import { buildAnfragePdf } from './pdf'
 
 interface Env {
   ASSETS: { fetch: (r: Request) => Promise<Response> }
@@ -31,11 +32,12 @@ async function verifyTurnstile(secret: string, token: string, ip: string | null)
 }
 
 // Bestätigung an den Absender der Anfrage; nur mit eigener, bei Resend verifizierter Absenderadresse (MAIL_FROM).
-// Mit ausgefülltem Firmenfeld (Geschäftskunde) wird gesiezt, sonst geduzt.
-async function sendConfirmation(env: Env, to: string, name: string, anlass: string, firma: string) {
-  if (!env.MAIL_FROM) return
+// Mit ausgefülltem Firmenfeld (Geschäftskunde) wird gesiezt, sonst geduzt. Das PDF im Anhang baut der Worker selbst (worker/pdf.ts),
+// nie das vom Browser geschickte, damit niemand über das Formular eigene Dateien an fremde Adressen verschicken kann.
+async function sendConfirmation(env: Env, to: string, name: string, anlass: string, firma: string, pdf: { base64: string; fileName: string; ref: string }) {
+  if (!env.MAIL_FROM || !env.TURNSTILE_SECRET) return
   const sie = firma.trim() !== ''
-  const subject = sie ? 'Ihre Anfrage bei JK-Mediaworks' : 'Deine Anfrage bei JK-Mediaworks'
+  const subject = `${sie ? 'Ihre' : 'Deine'} Anfrage bei JK-Mediaworks (${pdf.ref})`
   const text = (sie
     ? [
         `Guten Tag ${name},`,
@@ -43,6 +45,8 @@ async function sendConfirmation(env: Env, to: string, name: string, anlass: stri
         `vielen Dank für Ihre Anfrage (${anlass}). Sie ist bei mir eingegangen, und ich melde mich so schnell wie möglich bei Ihnen, in der Regel innerhalb von 1 bis 2 Werktagen.`,
         '',
         'Die Preise gestalte ich individuell nach Zeit und Aufwand, Sie erhalten von mir ein passendes Angebot. Die Bilder liefere ich nach Absprache, zum Beispiel bereits während der Veranstaltung, am selben Abend oder zum gewünschten Zeitpunkt.',
+        '',
+        'Ihre Angaben finden Sie zur Kontrolle als PDF im Anhang. Falls etwas fehlt oder sich ändert, antworten Sie einfach auf diese E-Mail.',
         '',
         'Mit freundlichen Grüßen',
         '',
@@ -57,6 +61,8 @@ async function sendConfirmation(env: Env, to: string, name: string, anlass: stri
         '',
         'Preise gestalte ich individuell nach Zeit und Aufwand, du bekommst von mir ein passendes Angebot. Die Bilder liefere ich nach Absprache, zum Beispiel schon während des Events, am selben Abend oder zum gewünschten Zeitpunkt.',
         '',
+        'Deine Angaben findest du zur Kontrolle als PDF im Anhang. Falls etwas fehlt oder sich ändert, antworte einfach auf diese E-Mail.',
+        '',
         'Viele Grüße',
         'Josua Küßner',
         'JK-Mediaworks · Wiesbaden',
@@ -67,7 +73,7 @@ async function sendConfirmation(env: Env, to: string, name: string, anlass: stri
     signal: AbortSignal.timeout(10000),
     method: 'POST',
     headers: { authorization: `Bearer ${env.RESEND_API_KEY}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ from: env.MAIL_FROM, to: [to], reply_to: env.MAIL_TO, subject, text }),
+    body: JSON.stringify({ from: env.MAIL_FROM, to: [to], reply_to: env.MAIL_TO, subject, text, attachments: [{ filename: pdf.fileName, content: pdf.base64 }] }),
   }).catch(() => undefined)
 }
 
@@ -131,7 +137,28 @@ async function handleAnfrage(request: Request, env: Env) {
     }),
   })
   if (res.ok) {
-    await sendConfirmation(env, email, clean(name, 60), anlass, clean(d.firma, 60))
+    const kopie = buildAnfragePdf(
+      {
+        name,
+        email,
+        phone: clean(d.phone),
+        firma: clean(d.firma),
+        adresse: clean(d.adresse),
+        anlass,
+        titel: clean(d.titel, 160),
+        datum: clean(d.datum, 10),
+        datumBis: clean(d.datumBis, 10),
+        zeit: clean(d.zeit),
+        ort: clean(d.ort),
+        personen: clean(d.personen),
+        express: Boolean(d.express),
+        formate: clean([...(Array.isArray(d.formate) ? d.formate : []), d.formatEigen].filter(Boolean).join(', '), 300),
+        budget: clean(d.budget),
+        nachricht: String(d.nachricht ?? '').slice(0, 4000),
+      },
+      SITE.brand,
+    )
+    await sendConfirmation(env, email, clean(name, 60), anlass, clean(d.firma, 60), kopie)
     return json({ ok: true })
   }
   return json({ ok: false, error: 'mail-failed' }, 502)
